@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brooks 交易课程训练系统</title>
+<style>
+:root{
+  --bg:#edf3f8;
+  --bg-accent:#dfe9f2;
+  --card:#ffffff;
+  --line:#d6e0ea;
+  --text:#142230;
+  --muted:#5d7285;
+  --brand:#1f6aa5;
+  --brand-soft:#e7f1f8;
+  --ok:#1f8a5c;
+  --ok-soft:#e5f5ee;
+  --bad:#c24a4a;
+  --bad-soft:#fdecec;
+  --shadow:0 18px 50px rgba(23, 53, 80, 0.12);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(31,106,165,0.12), transparent 32%),
+    radial-gradient(circle at top right, rgba(31,138,92,0.08), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, #f8fbfd 100%);
+  min-height:100vh;
+}
+
+.shell{
+  max-width:1080px;
+  margin:0 auto;
+  padding:14px 16px 18px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.hero{
+  margin-bottom:10px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.hero h1{
+  margin:0 0 4px;
+  font-size:28px;
+  line-height:1.08;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  max-width:760px;
+}
+
+.card{
+  background:rgba(255,255,255,0.92);
+  border:1px solid rgba(214,224,234,0.9);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+}
+
+.controls,
+.trainer{
+  padding:16px;
+}
+
+.controls{
+  margin-bottom:12px;
+}
+
+.control-grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.field.hidden{
+  display:none;
+}
+
+select,
+button{
+  width:100%;
+  border:none;
+  border-radius:14px;
+  font-size:15px;
+}
+
+select{
+  padding:10px 12px;
+  background:#f4f8fb;
+  color:var(--text);
+  border:1px solid var(--line);
+  height:42px;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:12px;
+}
+
+.actions button{
+  flex:1 1 0;
+}
+
+.primary{
+  padding:11px 14px;
+  background:linear-gradient(135deg, var(--brand), #2d89d0);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.secondary{
+  padding:11px 14px;
+  background:#eff5f9;
+  color:var(--text);
+  border:1px solid var(--line);
+  cursor:pointer;
+}
+
+.stats{
+  display:flex;
+  align-items:center;
+  margin-top:10px;
+}
+
+.stat{
+  padding:0;
+  border:none;
+  background:none;
+}
+
+.stat strong{
+  display:block;
+  font-size:15px;
+  line-height:1.2;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.25;
+}
+
+.hidden-meta{
+  display:none;
+}
+
+.trainer h2{
+  margin:0 0 8px;
+  font-size:18px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:var(--brand-soft);
+  color:var(--brand);
+  font-size:12px;
+  font-weight:700;
+}
+
+.stat small{
+  display:block;
+  margin-top:2px;
+  color:var(--brand);
+  font-size:11px;
+  font-weight:700;
+  line-height:1.25;
+  word-break:break-word;
+}
+
+.view{
+  display:flex;
+  flex-direction:column;
+}
+
+.view.hidden,
+.archive.hidden,
+.archive-panel.hidden{
+  display:none;
+}
+
+.archive{
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+}
+
+.archive-topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.back-btn{
+  width:auto;
+  min-width:110px;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--brand);
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.archive-heading{
+  flex:1;
+  min-width:240px;
+}
+
+.archive-heading h2{
+  margin:0 0 4px;
+  font-size:24px;
+  line-height:1.15;
+}
+
+.archive-heading p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+
+.archive-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.archive-tab{
+  width:auto;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#f4f8fb;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.archive-tab.active{
+  background:linear-gradient(135deg, var(--brand), #2d89d0);
+  color:#fff;
+  border-color:transparent;
+}
+
+.archive-section{
+  padding:14px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #fbfdff, #f2f7fb);
+  border:1px solid var(--line);
+}
+
+.archive-section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.archive-section-head h3{
+  margin:0 0 4px;
+  font-size:18px;
+}
+
+.archive-section-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+
+.ghost-btn{
+  width:auto;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+  color:var(--brand);
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.mastery-group{
+  display:grid;
+  gap:6px;
+}
+
+.mastery-row{
+  display:grid;
+  grid-template-columns:72px 1fr;
+  gap:8px;
+  align-items:start;
+}
+
+.mastery-label{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+  padding-top:2px;
+}
+
+.mastery-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  max-height:68px;
+  overflow:auto;
+  padding-right:2px;
+}
+
+.mastery-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:11px;
+  line-height:1.25;
+  border:1px solid var(--line);
+  background:#fff;
+}
+
+.mastery-chip.pass{
+  border-color:#9fddbe;
+  background:var(--ok-soft);
+  color:#10583a;
+}
+
+.mastery-chip.pending{
+  border-color:#d7e2ec;
+  background:#f4f8fb;
+  color:var(--muted);
+}
+
+.mastery-detail{
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:10px;
+  background:#fff;
+  border:1px dashed var(--line);
+}
+
+.mastery-detail h4{
+  margin:0 0 8px;
+  font-size:12px;
+}
+
+.mastery-detail-list{
+  display:grid;
+  gap:8px;
+  max-height:180px;
+  overflow:auto;
+  padding-right:2px;
+}
+
+.mastery-detail-item{
+  padding:8px 10px;
+  border-radius:10px;
+  background:#f8fbfe;
+  border:1px solid var(--line);
+}
+
+.mastery-detail-item strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:12px;
+}
+
+.mastery-detail-item span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+
+.history-group{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+}
+
+.history-block{
+  min-width:0;
+  padding:10px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+
+.history-block h4{
+  margin:0 0 8px;
+  font-size:12px;
+}
+
+.history-list{
+  display:grid;
+  gap:8px;
+  max-height:188px;
+  overflow:auto;
+  padding-right:2px;
+}
+
+.history-item{
+  padding:8px 10px;
+  border-radius:10px;
+  background:#f8fbfe;
+  border:1px solid var(--line);
+}
+
+.history-item strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.history-item span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+
+.archive .mastery-chips,
+.archive .mastery-detail-list,
+.archive .history-list{
+  max-height:none;
+  overflow:visible;
+  padding-right:0;
+}
+
+.trainer{
+  margin-top:12px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.progress-wrap{
+  margin-bottom:10px;
+}
+
+.progress-text{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.bar{
+  height:10px;
+  border-radius:999px;
+  background:#e9f0f5;
+  overflow:hidden;
+}
+
+.bar-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--brand), #5ab2f0);
+  transition:width 0.25s ease;
+}
+
+.question-shell{
+  padding:16px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #fbfdff, #f2f7fb);
+  border:1px solid var(--line);
+  min-height:320px;
+  flex:1;
+}
+
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.meta span{
+  padding:5px 9px;
+  border-radius:999px;
+  background:#edf4f9;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+
+.question{
+  margin:0 0 12px;
+  font-size:22px;
+  line-height:1.35;
+}
+
+.options{
+  display:grid;
+  gap:8px;
+}
+
+.option{
+  text-align:left;
+  padding:12px 14px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--text);
+  cursor:pointer;
+  transition:transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.option:hover:not(:disabled){
+  transform:translateY(-1px);
+  border-color:#9ab9d4;
+  box-shadow:0 10px 24px rgba(38, 82, 119, 0.08);
+}
+
+.option:disabled{
+  cursor:default;
+}
+
+.option.correct{
+  background:var(--ok-soft);
+  border-color:#9fddbe;
+  color:#10583a;
+}
+
+.option.wrong{
+  background:var(--bad-soft);
+  border-color:#f0b3b3;
+  color:#8f2b2b;
+}
+
+.feedback{
+  margin-top:16px;
+  padding:16px;
+  border-radius:16px;
+  display:none;
+  line-height:1.65;
+}
+
+.feedback.ok{
+  display:block;
+  background:var(--ok-soft);
+  color:#10583a;
+}
+
+.feedback.bad{
+  display:block;
+  background:var(--bad-soft);
+  color:#8f2b2b;
+}
+
+.feedback strong{
+  display:block;
+  margin-bottom:6px;
+}
+
+.next-row{
+  display:none;
+}
+
+.empty{
+  color:var(--muted);
+  line-height:1.7;
+}
+
+.result{
+  display:grid;
+  gap:12px;
+}
+
+.result-box{
+  padding:18px;
+  border-radius:18px;
+  background:#f7fbfe;
+  border:1px solid var(--line);
+}
+
+.result-box h3{
+  margin:0 0 8px;
+  font-size:22px;
+}
+
+.result-box p{
+  margin:0;
+  color:var(--muted);
+}
+
+.result-list{
+  display:grid;
+  gap:10px;
+}
+
+.result-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+
+.feedback-pop{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(13, 28, 43, 0.18);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.2s ease;
+  z-index:20;
+}
+
+.feedback-pop.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.feedback-card{
+  width:min(520px, calc(100vw - 28px));
+  padding:22px 20px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.97);
+  box-shadow:0 24px 60px rgba(18, 42, 66, 0.2);
+  text-align:center;
+  transform:translateY(20px) scale(0.94);
+  transition:transform 0.24s ease;
+}
+
+.feedback-pop.show .feedback-card{
+  transform:translateY(0) scale(1);
+}
+
+.feedback-face{
+  font-size:54px;
+  line-height:1;
+  margin-bottom:10px;
+  display:block;
+  animation:face-bounce 0.65s ease;
+}
+
+.feedback-card h3{
+  margin:0 0 6px;
+  font-size:24px;
+}
+
+.feedback-body{
+  display:grid;
+  gap:10px;
+  margin-top:2px;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:14px;
+  text-align:left;
+  max-height:min(46vh, 320px);
+  overflow:auto;
+  padding-right:4px;
+}
+
+.feedback-block{
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f7fbfe;
+  border:1px solid var(--line);
+}
+
+.feedback-label{
+  display:block;
+  margin-bottom:4px;
+  color:var(--text);
+  font-size:12px;
+  font-weight:700;
+}
+
+.feedback-answer{
+  color:var(--brand);
+  font-weight:700;
+}
+
+.feedback-actions{
+  display:flex;
+  justify-content:center;
+  margin-top:14px;
+}
+
+.feedback-actions.hidden{
+  display:none;
+}
+
+.feedback-next{
+  width:auto;
+  min-width:120px;
+  padding:10px 16px;
+}
+
+.feedback-pop.ok .feedback-card{
+  border:1px solid #a9dfc3;
+  background:linear-gradient(180deg, #ffffff, #eefaf3);
+}
+
+.feedback-pop.bad .feedback-card{
+  border:1px solid #f1b8b8;
+  background:linear-gradient(180deg, #ffffff, #fff1f1);
+}
+
+@keyframes face-bounce{
+  0%{transform:scale(0.72) rotate(-8deg);}
+  40%{transform:scale(1.12) rotate(4deg);}
+  100%{transform:scale(1) rotate(0deg);}
+}
+
+@media (max-width: 860px){
+  .shell{
+    min-height:auto;
+  }
+
+  .hero{
+    display:block;
+  }
+
+  .control-grid,
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .archive-topbar{
+    align-items:stretch;
+  }
+
+  .back-btn{
+    width:100%;
+  }
+
+  .archive-tabs{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-tab{
+    width:100%;
+  }
+
+  .mastery-row{
+    grid-template-columns:1fr;
+    gap:4px;
+  }
+
+  .history-group{
+    grid-template-columns:1fr;
+  }
+
+  .mastery-chips{
+    max-height:none;
+  }
+
+  .question{
+    font-size:21px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <section class="hero">
+    <div>
+      <h1 id="heroTitle">Brooks 交易课程训练系统</h1>
+      <p id="heroText">当前单元：入门。按 10 个主题训练，支持基础题、情境题和混合训练。</p>
+    </div>
+  </section>
+
+  <div class="view" id="homeView">
+    <section class="card controls">
+      <div class="control-grid">
+        <div class="field">
+          <label for="unit">训练单元</label>
+          <select id="unit">
+            <option value="intro">入门</option>
+            <option value="chart">图表分析</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="mode">训练模式</label>
+          <select id="mode">
+            <option value="quiz">基础题库</option>
+            <option value="scenario">情境训练</option>
+            <option value="mixed">混合训练</option>
+            <option value="wrong">错题库</option>
+          </select>
+        </div>
+        <div class="field" id="chapterField">
+          <label for="chapter" id="chapterLabel">章节范围</label>
+          <select id="chapter"></select>
+        </div>
+        <div class="field">
+          <label for="section" id="sectionLabel">小节范围</label>
+          <select id="section"></select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="startBtn">开始训练</button>
+        <button class="secondary" id="archiveBtn">训练档案</button>
+        <button class="secondary" id="resetBtn">重置结果</button>
+        <button class="secondary" id="clearWrongBtn">清空错题库</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <strong id="countStat">0题</strong>
+        </div>
+        <span class="hidden-meta" id="sectionStat">0</span>
+        <span class="hidden-meta" id="sectionStatLabel">当前覆盖主题</span>
+        <span class="hidden-meta" id="scopeStat">入门 · 全部主题</span>
+        <small class="hidden-meta" id="modeStat">基础题库</small>
+      </div>
+    </section>
+
+    <section class="card trainer">
+      <div class="topline">
+        <h2>开始训练后会在这里出题</h2>
+        <span class="badge" id="sessionBadge">等待开始</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-text">
+          <span id="progressText">进度：0/0</span>
+          <span id="scoreText">得分：0</span>
+        </div>
+        <div class="bar">
+          <div class="bar-fill" id="barFill"></div>
+        </div>
+      </div>
+
+      <div class="question-shell" id="panel">
+        <p class="empty">先选择训练单元、训练模式和范围，然后点击“开始训练”。</p>
+      </div>
+    </section>
+  </div>
+
+  <section class="card archive hidden" id="archiveView">
+    <div class="archive-topbar">
+      <button class="back-btn" id="backHomeBtn" type="button">返回训练</button>
+      <div class="archive-heading">
+        <h2>训练档案</h2>
+        <p id="archiveScopeText">当前单元：入门；范围：全部主题。档案按当前单元与范围筛选展示，不受训练模式影响。</p>
+      </div>
+      <span class="badge" id="archiveScopeBadge">入门 · 全部主题</span>
+    </div>
+
+    <div class="archive-tabs" role="tablist" aria-label="训练档案标签">
+      <button class="archive-tab active" id="archiveMasteryTab" data-tab="mastery" type="button">知识点掌握</button>
+      <button class="archive-tab" id="archiveHistoryTab" data-tab="history" type="button">做题记录</button>
+    </div>
+
+    <div class="archive-panel" id="archiveMasteryPanel">
+      <div class="archive-section">
+        <div class="archive-section-head">
+          <div>
+            <h3>知识点掌握</h3>
+            <p id="masteryHint">过关条件：本主题全部题目都至少答对一次</p>
+          </div>
+        </div>
+        <div class="mastery-detail" id="masteryDetail">
+          <h4>未过关知识点</h4>
+          <div class="mastery-detail-list" id="masteryDetailList"></div>
+        </div>
+        <div class="mastery-group">
+          <div class="mastery-row">
+            <div class="mastery-label">已过关</div>
+            <div class="mastery-chips" id="masteredList"></div>
+          </div>
+          <div class="mastery-row">
+            <div class="mastery-label">待加强</div>
+            <div class="mastery-chips" id="pendingList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="archive-panel hidden" id="archiveHistoryPanel">
+      <div class="archive-section">
+        <div class="archive-section-head">
+          <div>
+            <h3>做题记录</h3>
+            <p>每次开始训练都会随机出题，这里展示当前范围内的最近作答轨迹和反复错题。</p>
+          </div>
+          <button class="ghost-btn" id="clearHistoryBtn" type="button">清空做题记录</button>
+        </div>
+        <div class="history-group">
+          <div class="history-block">
+            <h4>最近做过</h4>
+            <div class="history-list" id="recentHistoryList"></div>
+          </div>
+          <div class="history-block">
+            <h4>反复错题</h4>
+            <div class="history-list" id="frequentWrongList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="feedback-pop" id="feedbackPop" aria-hidden="true">
+  <div class="feedback-card">
+    <span class="feedback-face" id="feedbackFace">🙂</span>
+    <h3 id="feedbackTitle">回答完成</h3>
+    <div class="feedback-body" id="feedbackBody"></div>
+    <div class="feedback-actions">
+      <button class="primary feedback-next" id="feedbackNextBtn" type="button">下一题</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const units = {
+  intro: {
+    label: "入门",
+    sectionLabel: "主题范围",
+    sectionCountLabel: "当前覆盖主题",
+    allSectionsLabel: "全部主题",
+    heroText: "当前单元：入门。按 10 个主题训练，支持基础题、情境题和混合训练。"
+  },
+  chart: {
+    label: "图表分析",
+    sectionLabel: "小节范围",
+    sectionCountLabel: "当前覆盖小节",
+    allSectionsLabel: "全部小节",
+    heroText: "当前单元：图表分析。按 08A-11D 小节训练，支持基础题、情境题和混合训练。"
+  }
+};
+
+const DEFAULT_UNIT = "intro";
+
+const sections = [
+  { unit: "intro", code: "intro_terms", chapter: "", title: "基础术语", focus: "熟悉 AIL、AIS、BO、PB、TTR、MM 等入门术语。" },
+  { unit: "intro", code: "intro_chart_basics", chapter: "", title: "K线与图表相关概念", focus: "理解蜡烛图、趋势K线、区间K线、内包线和外包线。" },
+  { unit: "intro", code: "intro_market_states", chapter: "", title: "市场走势核心分类", focus: "把市场简化为趋势或交易区间，并理解趋势到区间的演变。" },
+  { unit: "intro", code: "intro_analysis_types", chapter: "", title: "交易分析法与交易类型", focus: "区分技术分析、基本面分析、剥头皮、波段与投资。" },
+  { unit: "intro", code: "intro_trade_forms", chapter: "", title: "价格单位与交易形态", focus: "掌握跳动点、点数、手数、ABC 回调，以及双底/H2、双顶/L2 与 MTR。" },
+  { unit: "intro", code: "intro_execution", chapter: "", title: "交易实操核心概念", focus: "理解信号K线、背景、顺势逆势、always in 与止损。" },
+  { unit: "intro", code: "intro_participants", chapter: "", title: "市场参与主体与程序化交易", focus: "认识算法、机构、高频交易、套利与个人交易者定位。" },
+  { unit: "intro", code: "intro_market_logic", chapter: "", title: "图表目的与市场运行原理", focus: "理解图表的作用、市场寻找公平价格的过程与突破逻辑。" },
+  { unit: "intro", code: "intro_volume_news_risk", chapter: "", title: "成交量、新闻与风险偏好", focus: "理解成交量的局限、新闻反应、风险偏好与害怕错过。" },
+  { unit: "intro", code: "intro_mindset", chapter: "", title: "起步、时间框架与情绪管理", focus: "建立正确起步方式、时间框架认知与情绪管理框架。" },
+
+  { unit: "chart", code: "08A", chapter: "8", title: "蜡烛图、形态、信号柱", focus: "区分趋势K线与交易区间K线，理解影线、信号K线与背景优先级。" },
+  { unit: "chart", code: "08B", chapter: "8", title: "反转K线、多K线反转、内包线和外包线", focus: "识别单根与多根反转，掌握内包线与外包线的语境化使用。" },
+  { unit: "chart", code: "08C", chapter: "8", title: "窄幅震荡交易形态、IOI模式突破", focus: "理解窄幅震荡、II/IOI/OIO 的突破属性与最终旗形风险。" },
+  { unit: "chart", code: "08D", chapter: "8", title: "交易形态、第二信号、逆势操作", focus: "把信号K线放回背景中，学会弱形态等待第二信号与逆势门槛。" },
+  { unit: "chart", code: "09A", chapter: "9", title: "回调与K线计数", focus: "掌握回调定义、50%回调，以及 H1/H2 上涨恢复、L1/L2 下跌恢复的计数逻辑。" },
+  { unit: "chart", code: "09B", chapter: "9", title: "双顶双底与连续反转", focus: "把双底≈H2、双顶≈L2、楔形与 H4/L4 放到趋势强弱里判断。" },
+  { unit: "chart", code: "09C", chapter: "9", title: "无限回调、时间周期、H2/L2离场", focus: "识别 20 根以上的无限回调，并理解上涨中的空头常在 H2 离场、下跌中的多头常在 L2 离场。" },
+  { unit: "chart", code: "10A", chapter: "10", title: "买卖压力、缺口", focus: "通过K线实体、收盘位置、跳空与通道变化衡量买卖压力。" },
+  { unit: "chart", code: "10B", chapter: "10", title: "交易区间、通道", focus: "评估区间里的力量累积，以及上升/下降通道向区间演变的规律。" },
+  { unit: "chart", code: "11A", chapter: "11", title: "缺口、什么是缺口", focus: "把缺口理解为价格与支撑阻力之间的空间，并区分突破、测量、衰竭缺口。" },
+  { unit: "chart", code: "11B", chapter: "11", title: "移动平均缺口K线、衰竭缺口", focus: "识别 20 缺口K线与趋势末端的大型衰竭缺口。" },
+  { unit: "chart", code: "11C", chapter: "11", title: "微小缺口、缺口开盘、实体缺口", focus: "利用微小缺口、缺口开盘和实体缺口评估趋势强度与目标位。" },
+  { unit: "chart", code: "11D", chapter: "11", title: "缺口引发趋势、阶梯", focus: "理解开放缺口代表强趋势，缺口关闭代表阶梯和趋势减弱。" }
+];
+
+const sectionMap = Object.fromEntries(sections.map(section => [section.code, section]));
+
+const sectionNotebookExcerpts = {
+  intro_terms: "原笔记里这一块先列的是术语表：AIL = Always in long（始终做多），AIS = Always in short（始终做空），BO = Breakout（突破），PB = Pullback（回调），TBTL = Ten Bars, Two Legs correction（十根K线、两段式调整）。",
+  intro_chart_basics: "原笔记写得很直接：趋势K线是“实体较大、影线短”；交易区间K线是“实体小、影线长”。内包线是“高低点均处于前一根K线波动区间内”，外包线是“高点突破/持平前高、低点跌破/持平前低”。",
+  intro_market_states: "原笔记的核心二分法是：“任何市场在任何时间，仅处于趋势行情或交易区间两种状态之一。” 另外还强调“趋势通道最终通常会演变成交易区间”。",
+  intro_analysis_types: "原笔记把技术分析定义为“核心依据：价格图表与价格走势”；基本面分析则是“核心依据：经济相关信息，基本不参考价格图表”。交易类型上又区分为剥头皮、波段和投资者。",
+  intro_trade_forms: "原笔记这里把“跳动点、点数、手数、整数关口”放在一起讲，又强调“ABC 回调”是三段调整，“双底是经典的高2做多形态”，“双顶是典型的低2做空形态”，MTR 则是主要趋势反转。",
+  intro_execution: "原笔记原话重点是：信号K线是“发出信号的K线，是入场的依据”；趋势背景是“当前K线左侧的所有K线走势”；一直持仓方向则是“若必须立刻持有仓位，最优的做多/做空选择”。",
+  intro_participants: "原笔记明确写到：“电脑掌控所有主流市场，绝大多数交易为自动化交易。” 机构类型包括银行、对冲基金、高频交易公司、养老基金、共同基金；个人交易者更适合学习跟随机构留下的价格行为。",
+  intro_market_logic: "原笔记这一段的核心是：“所有市场信息最终都反映在价格中。” 还强调市场是在不断寻找“公平价格”，而图表的价值是把这些多空博弈直观展示出来。",
+  intro_volume_news_risk: "原笔记对这块的态度很鲜明：成交量“往往会成为交易者不执行正确决策的借口”；关于新闻则写得更直接，“唯一重要的是市场对新闻的反应”。风险偏好和害怕错过讲的是资金愿意为上涨动量承担更高风险。",
+  intro_mindset: "原笔记反复强调“不存在秘密或完美的交易系统”，建议新手以 5 分钟图起步，并把仓位降到“我不在乎”的级别。后面又强调优秀交易者要自律、客观、耐心，并接受不确定性。",
+
+  "08A": "原笔记写得很清楚：“图表上的每一根K线要么是趋势K线，要么是交易区间K线。” 还特别强调“背景决定性质”：在强趋势中，小实体K线也可能被视为趋势K线；在横盘市场中，大实体K线仍可能是交易区间K线的一部分。",
+  "08B": "原笔记对反转棒的最低要求是：“做多信号K线的最低要求：收盘价位于K线中点上方；即使K线本身为阴线，只要收盘收在K线中点，仍视为牛市反转K线。” 另外还写到“双K线反转 = 更高时间周期上的单根反转K线”。",
+  "08C": "原笔记这里的规则很明确：“10–20根K线后：建议停止交易，等待突破。” 还说“所有小级别窄幅震荡模式（II、IOI、OIO等）在更小时间周期上均为三角形”，而趋势末端的 II 模式要警惕最终旗形。",
+  "08D": "原笔记先定义交易形态由“信号K线 + 市场背景”组成，并强调“单独好的信号K线 ≠ 好的交易机会”。 对交易区间则直接给出结论：“80%的突破尝试会失败”，逆势交易必须等更强的信号和确认。",
+  "09A": "原笔记对回调的定义非常具体：多头趋势中，“当前K线最低价低于前一K线最低价时，称为回调”。 还强调“回调长度超过20根K线后，趋势恢复的概率会下降”。 计数上，多头回调后的 H1/H2 用来统计恢复上涨的尝试，空头反弹后的 L1/L2 用来统计恢复下跌的尝试。",
+  "09B": "原笔记把双顶双底直接和计数体系连起来：双顶通常是“L2卖出”设定，双底通常是“H2买入”设定；楔形顶部对应 L3，楔形底部对应 H3。复杂的 H4/L4，又可以看作嵌套的 H2/L2。",
+  "09C": "原笔记对无限回调的判断标准是：“当回调达到约20根K线以上，尤其是在紧密通道中，该回调被称为无限回调。” 后面又说此时市场进入中性状态，趋势延续与反转概率大致各为50%，看不懂时应切到更大周期。 逆势离场上，则是上涨里的空头常看 H2， 下跌里的多头常看 L2。",
+  "10A": "原笔记先讲买卖压力：“买方强，价格容易上涨；卖方强，价格容易下跌。” 对缺口的定义则是“当前K线最低价高于前一根最高价”为向上缺口；并强调“缺口迅速补齐 > 动能不足”。",
+  "10B": "原笔记在这一节反复强调交易区间里要看力量累积，而通道里要看哪边在衰老。最关键的概率句是：“上升通道有75%的概率会向下跌破趋势线，只有25%的概率会向上加速突破；下跌通道有75%的概率向上突破。”",
+  "11A": "原笔记把缺口定义得很宽：“缺口是指当前价格与任何支撑位或阻力位之间的空白区域。” 同时也提醒“震荡区间中的缺口通常没有预测意义”，并把缺口分成突破缺口、测量缺口和衰竭缺口。",
+  "11B": "原笔记说移动平均缺口K线是趋势运行 20 根以上后出现的早期预警信号；而衰竭缺口则是“出现在趋势后期的大型K线”。 关键确认点是：如果缺口快速被回测并关闭，那更像“最后的疯狂”。",
+  "11C": "原笔记这里的三个关键词是：微小缺口、缺口开盘、实体缺口。 其中实体缺口被定义为“两根K线实体之间没有重叠，即使影线可能重叠”，并强调“缺口是否保持开启状态是衡量趋势强度的关键”。",
+  "11D": "原笔记这一节的中心句就是：“缺口通常会引发趋势；如果缺口一直保持开启状态，说明市场力量很强。” 相反，“如果在趋势中缺口不断被关闭，这就是阶梯模式”，通常意味着趋势正在减弱。"
+};
+
+const quizBank = [
+  { section: "08A", q: "图表上的每一根K线，本质上都属于哪两类之一？", opts: ["趋势K线或交易区间K线", "突破K线或缺口K线", "趋势K线或反转K线", "趋势K线或信号K线"], a: 0, exp: "Brooks 的基本分类是：每根K线不是趋势K线，就是交易区间K线。" },
+  { section: "08A", q: "更符合趋势K线特征的是哪一项？", opts: ["实体小、影线长、重叠多", "实体至少占一半且影线短", "实体小但颜色单一", "只要K线很大就是趋势K线"], a: 1, exp: "趋势K线强调大实体、短影线和从一端走向另一端的急迫性。" },
+  { section: "08A", q: "在横盘背景中，即使出现一根大实体K线，它也可能仍被视为：", opts: ["趋势启动", "测量缺口", "交易区间K线", "完美信号K线"], a: 2, exp: "K线性质由背景决定，横盘中的大实体K线仍可能只是区间的一部分。" },
+  { section: "08A", q: "影线最常代表什么含义？", opts: ["趋势确认", "失败的突破尝试", "主趋势结束", "成交量放大"], a: 1, exp: "每一根影线都可以看作一次失败的突破尝试。" },
+  { section: "08A", q: "哪项最能体现 08A 的核心原则？", opts: ["只等完美信号K线", "背景比单根信号K线更重要", "只看K线颜色", "信号K线越大越一定成功"], a: 1, exp: "好背景可以让普通信号成立，差背景会让漂亮信号失效。" },
+
+  { section: "08B", q: "做多反转K线的最低要求是：", opts: ["必须是阳线", "收盘在K线中点上方", "必须有长上影线", "必须突破20根K线高点"], a: 1, exp: "哪怕是阴线，只要收在中点上方，也可以算牛市反转K线。" },
+  { section: "08B", q: "最强做空信号K线更常出现在：", opts: ["交易区间中间", "窄幅震荡中央", "双顶、楔形顶等极端位置", "任何时间都一样"], a: 2, exp: "位置优先，极端位置上的反转K线胜率更高。" },
+  { section: "08B", q: "双K线反转放到更高时间周期，通常会表现为：", opts: ["普通十字星", "单根反转K线", "一个缺口", "无意义噪音"], a: 1, exp: "多K线反转在更高时间周期上，常能压缩成单根反转K线。" },
+  { section: "08B", q: "内包线的定义更接近于：", opts: ["高低点都突破前K线", "高点不超前高且低点不破前低", "只看收盘价是否更高", "实体比前一根更大"], a: 1, exp: "内包线是高点小于等于前高、低点大于等于前低。" },
+  { section: "08B", q: "关于外包线，哪项更正确？", opts: ["外包线本身一定是强入场理由", "做多时优先追外包线上方", "外包线必须结合背景，不能孤立交易", "只要出现外包线就代表反转"], a: 2, exp: "外包线本身并不自动构成优质交易，需要放回语境中判断。" },
+
+  { section: "08C", q: "窄幅震荡持续 10-20 根K线后，更合理的做法是：", opts: ["继续频繁交易", "只做突破方向", "停止交易并等待突破", "只在中间追单"], a: 2, exp: "窄幅震荡过久时，区间太窄，突破前的交易性价比很差。" },
+  { section: "08C", q: "II、IOI、OIO 这些模式在更小时间周期上，本质上更像：", opts: ["双顶双底", "楔形旗形", "三角形", "岛形反转"], a: 2, exp: "这些窄幅整理模式在更小级别都可视为三角形或突破模式。" },
+  { section: "08C", q: "关于 IOI 模式，下列哪项更准确？", opts: ["方向固定向上", "方向固定向下", "方向取决于市场语境", "只适用于交易区间"], a: 2, exp: "IOI 是突破模式，但真正偏多还是偏空要看背景和信号K线质量。" },
+  { section: "08C", q: "趋势中续时，更高概率的旗形交易通常是：", opts: ["均线附近的 H2/L2", "区间中间的十字星", "无回调趋势中的外包线", "20根横盘后的第一次假突破"], a: 0, exp: "均线附近的 H2/L2 是课程里强调的高概率旗形交易。" },
+  { section: "08C", q: "趋势末端出现 II 模式时，应首先警惕：", opts: ["趋势加速", "最终旗形反转", "一定向上突破", "一定向下突破"], a: 1, exp: "趋势末端的 II 模式常是最终旗形，需要防反转。" },
+
+  { section: "08D", q: "交易形态的完整构成包括：", opts: ["只看信号K线", "信号K线 + 市场背景", "只看均线位置", "只看止损大小"], a: 1, exp: "单独的好信号K线不等于好交易，背景必须一起看。" },
+  { section: "08D", q: "在交易区间里，80% 的突破尝试会怎样？", opts: ["快速形成趋势", "失败", "直接变成岛形反转", "都变成H2"], a: 1, exp: "交易区间的铁律之一，就是多数突破会失败，因此更适合区间两端做反转。" },
+  { section: "08D", q: "当第一信号较弱、背景一般时，更合理的做法是：", opts: ["立刻重仓进场", "等待第二信号", "只看更小周期", "取消止损"], a: 1, exp: "第二信号本质上是第一次失败后的再次尝试，胜率通常更高。" },
+  { section: "08D", q: "在强趋势中做逆势单，最低门槛通常是：", opts: ["任何反向K线都可以", "强反转K线加跟随确认", "只看长影线", "只要盈亏比好"], a: 1, exp: "逆势交易要求远高于顺势交易，需要更强的信号与确认。" },
+  { section: "08D", q: "在紧凑趋势通道中，第一根反转K线通常应该如何处理？", opts: ["直接逆势交易", "最好不做逆势，先等更明确反转", "立刻加仓反向", "只要是阳线就买"], a: 1, exp: "紧凑通道里的第一次反转，多数只是小回调，不足以形成反趋势。" },
+
+  { section: "09A", q: "在多头趋势里，出现回调的最直接定义是：", opts: ["当前K线高点高于前高", "当前K线低点低于前一K线低点", "当前K线收盘为阴线", "出现长下影线"], a: 1, exp: "多头趋势中的回调，以当前低点低于前低来定义。" },
+  { section: "09A", q: "当回调长度超过 20 根K线后，趋势恢复概率通常会：", opts: ["明显上升", "下降，并更像交易区间", "不变", "变成 90% 必涨"], a: 1, exp: "长回调意味着趋势动能减弱，市场更可能转为中性或区间。" },
+  { section: "09A", q: "H1 在多头趋势中的含义是：", opts: ["回调后第一次恢复上涨的尝试", "第一次跌破前低", "第二次反转做空", "回调达到50%"], a: 0, exp: "H1 就是多头回调后第一次尝试恢复上涨的信号。" },
+  { section: "09A", q: "L2 在空头趋势中的含义是：", opts: ["第一次试图止跌", "第二次尝试恢复下跌", "第二次做多信号", "趋势结束信号"], a: 1, exp: "L2 是空头趋势里第二次试图恢复下跌，因此常是强卖点。" },
+  { section: "09A", q: "50% 回调在实战里常见的意义是：", opts: ["趋势必然结束", "多空常在此挂单博弈恢复趋势", "只适合做逆势", "代表无限回调"], a: 1, exp: "50% 回调兼具心理与数学上的吸引力，常被用作顺势介入区。" },
+
+  { section: "09B", q: "在 Brooks 的计数语言里，双底更该理解成：", opts: ["第二次止跌后的 H2 买入设定", "趋势中部的随机盘整", "L2 顺势卖出设定", "独立于计数体系的孤立形态"], a: 0, exp: "双底的关键不是名字本身，而是它通常代表第二次止跌尝试，因此常落在 H2 买点语境里。" },
+  { section: "09B", q: "在熊市反弹后的做空语境里，小双顶最常对应：", opts: ["H2 买入信号", "L2 卖出信号", "只有突破后才有意义", "必须演变成 H4 才能交易"], a: 1, exp: "熊市里的小双顶，本质上常是第二次止涨失败，因此更接近 L2 顺势卖出设定。" },
+  { section: "09B", q: "楔形底部在推动计数里，通常更接近：", opts: ["L3 卖出", "H3 买入", "H1 买入", "L2 卖出"], a: 1, exp: "楔形底部强调的是第三次止跌后的恢复，因此通常归入 H3 买入语境。" },
+  { section: "09B", q: "关于 H4/L4，下列理解更符合课程的是：", opts: ["它们是与 H2/L2 完全无关的新形态", "只会出现在极大周期图表里", "本质上常可拆成嵌套的 H2/L2", "一旦出现就比 H2/L2 更高概率"], a: 2, exp: "H4/L4 不是神秘新物种，更多是复杂结构里重复出现的 H2/L2 嵌套。" },
+  { section: "09B", q: "在非常强的牛市背景里看到普通双顶，课程更偏向提醒你：", opts: ["优先把它当主跌起点重仓做空", "更可能只形成小回调，别像震荡里那样积极抢顶", "双顶在强趋势里比震荡里更可靠", "只要是双顶就必须反手"], a: 1, exp: "强趋势会显著降低逆势顶部形态的质量，很多双顶最终只会演变成小回调或旗形。" },
+
+  { section: "09C", q: "无限回调最典型的识别标准之一是：", opts: ["只有两根K线", "持续超过 20 根且形成紧密通道", "必须出现跳空", "必须触碰均线"], a: 1, exp: "无限回调强调时间拉长与通道紧密，往往超过 20 根K线。" },
+  { section: "09C", q: "当回调超过 20 根并变得紧密时，市场概率更接近：", opts: ["90% 顺势恢复", "50% 延续 / 50% 反转", "100% 反转", "100% 横盘"], a: 1, exp: "无限回调把市场带到更中性的状态，胜率不再偏向趋势恢复。" },
+  { section: "09C", q: "如果当前时间周期非常难看懂，更合理的动作是：", opts: ["切到更小周期继续找信号", "切到更大周期看整体结构", "忽略背景直接下单", "只看指标"], a: 1, exp: "Brooks 强调，看不懂时先拉大周期，先弄懂结构。" },
+  { section: "09C", q: "H2 之所以常是强买点，一个重要原因是：", opts: ["第一次做空一定失败", "逆势空头到第二次上涨时常被迫回补", "均线一定上穿", "只因止损更小"], a: 1, exp: "第二次趋势恢复时，顺势单主动入场，逆势单又被迫离场，推动更强。" },
+  { section: "09C", q: "在上涨趋势里做空的逆势交易者，通常应在什么位置认输离场？", opts: ["H1", "H2", "任何阴线收盘", "双底"], a: 1, exp: "H2 是上涨趋势恢复的重要节点，逆势空头通常应在这里退出。" },
+
+  { section: "10A", q: "下列哪组特征更能体现买入压力？", opts: ["长上影线、收盘低、连续阴线", "长下影线、收盘高、连续大阳线", "连续十字星、重叠多", "高低点都不变"], a: 1, exp: "长下影线、连续大阳线和高收盘都说明多头更主动。" },
+  { section: "10A", q: "卖出压力更强时，常见特征是：", opts: ["长上影线、连续大阴线、收盘接近低点", "长下影线、阳线变大", "连续小阳线", "跳空高开后高收"], a: 0, exp: "卖压增强时，价格常被上推后压回，并持续低收盘。" },
+  { section: "10A", q: "标准向上缺口的定义是：", opts: ["当前收盘高于前收盘", "当前最低价高于前一根最高价", "当前最高价高于前高", "当前开盘高于均线"], a: 1, exp: "向上缺口强调整根K线的低点都在前一根高点上方。" },
+  { section: "10A", q: "趋势末期出现并很快回补的缺口，更可能属于：", opts: ["突破缺口", "普通缺口", "衰竭缺口", "岛形底"], a: 2, exp: "衰竭缺口常发生在趋势末端，看似强但很快被补回。" },
+  { section: "10A", q: "为什么一根巨大的趋势K线也常被视作缺口？", opts: ["因为一定没有影线", "因为代表动能突然增强和价格跃迁", "因为只能出现在日线", "因为它等同于岛形反转"], a: 1, exp: "即使没有视觉跳空，大趋势K线也表达了类似缺口的动能跃迁。" },
+
+  { section: "10B", q: "观察交易区间时，最重要的任务之一是：", opts: ["只在中间频繁交易", "判断哪一边的力量在持续累积", "忽略收盘位置", "默认会向上突破"], a: 1, exp: "交易区间里要不断评估买卖压力，寻找最终突破方向。" },
+  { section: "10B", q: "上升通道向上的再加速概率，大致只有：", opts: ["25%", "50%", "75%", "90%"], a: 0, exp: "课程里强调，上升通道更常向下跌破趋势线并演变成区间。" },
+  { section: "10B", q: "下跌通道最终向上突破的概率，大致更接近：", opts: ["10%", "25%", "50%", "75%"], a: 3, exp: "下跌通道常被视为多头旗形，大约 75% 会向上突破。" },
+  { section: "10B", q: "在下跌通道中，长下影线往往说明：", opts: ["卖方更强", "买方在吸收、空头在短线回补", "市场已经反转完成", "必然继续暴跌"], a: 1, exp: "长下影线意味着更低价格被拒绝，买力开始浮现。" },
+  { section: "10B", q: "一旦确认多头重新控制市场，更常见的止损思路是：", opts: ["放在最近信号K线或最近低点下方", "不设止损", "只放在开盘价", "放在通道中间"], a: 0, exp: "如果多头真的控制市场，价格就不应再跌破最近关键低点。" },
+
+  { section: "11A", q: "Brooks 对缺口的更广义理解是：", opts: ["只有日线跳空才算", "价格与任意支撑或阻力之间的空白区域", "只有开盘价变化才算", "只有实体不重叠才算"], a: 1, exp: "缺口不只是传统跳空，也包括价格与关键位之间的空间。" },
+  { section: "11A", q: "在交易区间内部，大多数缺口通常：", opts: ["极有预测价值", "意义有限，容易反转", "一定形成趋势", "一定形成岛形反转"], a: 1, exp: "震荡区里的缺口和突破，通常缺少持续性。" },
+  { section: "11A", q: "测量缺口的主要用途是：", opts: ["确认趋势结束", "推测等距运动目标位", "证明是岛形反转", "只用于止损"], a: 1, exp: "测量缺口常用来估算趋势还可能延伸多远。" },
+  { section: "11A", q: "“趋势K线就是缺口”这句话强调的是：", opts: ["趋势K线都必须跳空", "强趋势K线本质上也是突破和价格重估", "影线不重要", "日线比分钟线更准"], a: 1, exp: "重点不在视觉空白，而在市场用强动能重新定价。" },
+  { section: "11A", q: "关于岛形反转，更符合课程观点的是：", opts: ["出现后必然形成长期趋势", "属于反转标志，但很多最后仍会变成震荡", "只出现在月线", "必须两个缺口完全同价"], a: 1, exp: "岛形反转有意义，但并不保证走出持续单边趋势。" },
+
+  { section: "11B", q: "多头趋势中的移动平均缺口K线，通常出现在：", opts: ["价格运行20根以上后，首次有K线完全落到均线下方", "任何触碰均线的K线", "均线向上拐头时", "每次回调第一根"], a: 0, exp: "20 缺口K线强调趋势已远离均线较久，首次显著回到均线另一侧。" },
+  { section: "11B", q: "20 缺口K线在强多头趋势中，通常先代表：", opts: ["趋势立刻反转", "趋势大概率恢复，但空头力量在增强", "一定继续暴涨", "只是普通横盘"], a: 1, exp: "它既常带来最后一段趋势恢复，也是在提醒趋势开始变弱。" },
+  { section: "11B", q: "衰竭缺口刚出现时最难的地方是：", opts: ["找不到止损位", "难与测量缺口区分", "无法判断方向", "无法看到K线"], a: 1, exp: "同样是强势大K线，刚出现时很难立刻分清是中继还是衰竭。" },
+  { section: "11B", q: "衰竭缺口最重要的确认之一是：", opts: ["成交量放大", "缺口被回补关闭", "均线拐头", "出现十字星"], a: 1, exp: "一旦价格穿回突破点、缺口被补，衰竭逻辑才更成立。" },
+  { section: "11B", q: "在空头趋势持续 10-20 根以上后出现巨大阴线低收盘，更可能需要警惕：", opts: ["牛旗结束", "衰竭缺口或抛售高潮", "强势中继", "必然创新低很多"], a: 1, exp: "趋势后期的大阴线不一定是新起点，也可能是最后的疯狂。" },
+
+  { section: "11C", q: "微小缺口指的是：", opts: ["只有肉眼很明显的大跳空", "非常小、容易忽视的价格空白", "任何两根K线间的距离", "只有收盘价不重叠"], a: 1, exp: "微小缺口往往很细微，但仍有趋势强度意义。" },
+  { section: "11C", q: "缺口开盘K线最常表达的是：", opts: ["市场停滞", "交易者的急迫性与压力方向", "成交量减少", "一定是假突破"], a: 1, exp: "开盘就跳空，说明有一方非常急迫，愿意以更差价格成交。" },
+  { section: "11C", q: "实体缺口的定义是：", opts: ["影线不重叠", "开盘价高于前收盘", "两根K线实体不重叠，即使影线可重叠", "必须是岛形反转的一部分"], a: 2, exp: "实体缺口看的是实体区间是否重叠，不要求影线完全分离。" },
+  { section: "11C", q: "如果缺口在几根K线后就被关闭，通常说明：", opts: ["趋势更强了", "控制力减弱，趋势可能转弱", "一定会反向大趋势", "和趋势无关"], a: 1, exp: "快速补缺意味着原方向无法维持优势，强度在下降。" },
+  { section: "11C", q: "连续向上的缺口更常意味着：", opts: ["市场容易下跌", "多头压力持续并可能继续走高", "趋势已经结束", "只适用于外汇"], a: 1, exp: "连续向上的缺口体现了买方持续急迫，通常有利于趋势延续。" },
+
+  { section: "11D", q: "缺口一直保持开启状态，通常更说明：", opts: ["市场力量强，趋势更健康", "市场会立刻震荡", "一定要逆势", "量测失效"], a: 0, exp: "开放缺口代表原方向控制力强，对手盘迟迟无法把它补回。" },
+  { section: "11D", q: "阶梯模式本质上是指：", opts: ["趋势越来越强", "缺口不断被关闭，趋势逐渐减弱", "每根K线都创新低", "只存在于牛市"], a: 1, exp: "一旦缺口老是被补，通道通常从紧变宽，并向区间演化。" },
+  { section: "11D", q: "在强熊市里看到 2-4 个开放缺口时，更合理的思路是：", opts: ["积极抄底", "只寻找卖出理由", "等待双底买入", "忽略缺口"], a: 1, exp: "连续开放缺口代表空头极强，逆势买入胜率很差。" },
+  { section: "11D", q: "如果买方开始能够在熊市中新低买入并获利，通常提示：", opts: ["熊市更强了", "趋势出现问题，可能转宽通道或区间", "必须立刻反转成牛市", "只是随机现象"], a: 1, exp: "当对手盘开始赚钱，原趋势通常已经不再像之前那样健康。" },
+  { section: "11D", q: "在牛市中，如果某根K线低点保持在前一根高点之上且缺口不补，较合理的态度是：", opts: ["优先找空", "优先找多", "只做区间", "等20根后再看"], a: 1, exp: "开放向上缺口代表多头强势，逻辑上应站在买方一侧。" }
+];
+
+const scenarios = [
+  { section: "08A", q: "强趋势刚启动，连续三根小阳线虽然实体不大，但高低点不断抬高。你更该把它理解为：", opts: ["交易区间K线，先忽略", "趋势K线，体现多头急迫", "衰竭缺口", "完美反转空点"], a: 1, exp: "在强趋势背景里，小实体K线也可能是趋势K线，关键看是否持续抬高高低点。" },
+  { section: "08A", q: "交易区间中部突然出现一根漂亮的大阴线反转棒，但前后K线高度重叠、影线很多。更合理的判断是：", opts: ["立即重仓做空", "把它当作区间中的普通波动，重视背景", "这一定是主跌启动", "只要K线大就必做"], a: 1, exp: "区间中部的漂亮信号常常没有足够背景支撑，不能只看单根K线。" },
+
+  { section: "08B", q: "牛市里回调到 50% 附近形成双底，随后一根K线收盘重新站上中点上方。更标准的处理是：", opts: ["在信号K线高点上方挂多单", "等它跌破低点做空", "只做区间反向单", "忽略双底"], a: 0, exp: "这是典型的牛市反转信号，常用做法是信号K线高点上方突破买入。" },
+  { section: "08B", q: "强上涨后出现一根外包大阴线，收盘跌破前K线低点并跌穿双顶颈线。你更应理解为：", opts: ["只是普通回调，继续追多", "空头可能夺回控制，可卖或等熊旗再卖", "与前文无关", "只适合看多"], a: 1, exp: "外包大阴线若打穿关键支撑，常意味着多头止损与空头进场同时发生。" },
+
+  { section: "08C", q: "市场已横盘 12 根K线，区间非常窄。此时在区间中央再继续下单，最大的风险是：", opts: ["容易错过趋势", "风险回报比差，突破前很难做出利润", "一定会大赚", "只会向上突破"], a: 1, exp: "窄幅震荡时间过长后，最常见的问题不是方向，而是可交易性太差。" },
+  { section: "08C", q: "8 根阳线微通道之后，价格在均线上方整理成 IOI，第三根又是收盘靠近高点的阳线。更偏向的计划是：", opts: ["顺着牛市语境做多", "直接反手做空", "只看区间两端", "放弃所有突破"], a: 0, exp: "牛市语境中的 IOI 若第三根偏强，通常更像牛旗暂停后的延续。" },
+
+  { section: "08D", q: "交易区间顶部出现一根看起来不错的买入信号K线，但左侧同价位多次受阻。更合理的处理是：", opts: ["积极追多", "把它视为买入陷阱，更偏向寻找做空机会", "无脑抄底", "只看信号K线不看位置"], a: 1, exp: "区间顶部是卖区，漂亮的买信号也往往只能走成小反弹。" },
+  { section: "08D", q: "强多头趋势中出现一根小阴线或十字星。你想逆势做空，课程更倾向建议：", opts: ["立即做空", "先等更强反转和跟随，弱信号不够", "加大仓位", "只因盈亏比好就做"], a: 1, exp: "在强趋势里，第一根弱势反向K线通常不够，逆势需要强棒和确认。" },
+
+  { section: "09A", q: "上涨趋势回调到 50% 附近，随后形成 H2。更标准的思路是：", opts: ["等待做空", "把它视为顺势买点", "趋势已经结束", "只做震荡反向"], a: 1, exp: "50% 回调附近的 H2 常是趋势恢复的高概率切入点。" },
+  { section: "09A", q: "一段牛市中连续出现了很多次 H1，已经到了第 5-6 次。此时更稳妥的态度是：", opts: ["趋势越来越健康，可以随便追多", "警惕趋势减弱，别盲目追高", "必然马上大跌", "只看第一根阳线"], a: 1, exp: "连续太多次 H1 往往说明趋势已不如早期顺畅，追价要谨慎。" },
+
+  { section: "09B", q: "如果一个顶部结构已经发展到第四推，课程更合理的提醒是：", opts: ["第四推天然最强，可忽略背景", "推动次数越多越该机械进场", "第四推不是不能做，但更依赖上下文，不能当成自动高胜率", "第四推一定意味着主要趋势反转"], a: 2, exp: "推动来到第四推时，不能机械地把它当更强信号，反而要更看重趋势强弱、位置和跟随表现。" },
+  { section: "09B", q: "双顶双底与连续反转这一节里，最容易出错的理解是：", opts: ["把形态放回趋势强弱里判断", "把双底看作第二次止跌尝试", "把双顶看作第二次止涨失败", "只要看到双顶双底就脱离背景独立交易"], a: 3, exp: "09B 的核心不是背形态名称，而是把双顶双底、楔形和连续反转放回趋势背景里理解。脱离背景单独交易最容易出错。" },
+
+  { section: "09C", q: "一段上涨后的回调已经持续 22 根K线，并形成紧密小通道。此时更合理的基线判断是：", opts: ["仍然高概率直接恢复上涨", "市场更接近中性，延续与反转都约50%", "一定下跌反转", "一定马上突破"], a: 1, exp: "超过 20 根的紧密回调，已经接近无限回调逻辑，市场不再明显偏向原趋势。" },
+  { section: "09C", q: "你在熊市里逆势做多，行情随后走出 L2。课程更建议你：", opts: ["继续死扛", "在 L2 处离场", "加仓做多", "忽略计数"], a: 1, exp: "L2 是空头趋势恢复的重要节点，逆势多头继续持有通常不划算。" },
+
+  { section: "10A", q: "交易区间里，阳线越来越多、实体变大、收盘接近高点，且收盘站上过去 20-30 根K线高点。更合理的判断是：", opts: ["卖压增强", "买压在积累，向上突破概率上升", "趋势结束", "一定是假突破"], a: 1, exp: "这是典型的买盘压力积累过程，尤其适合作为向上突破的前兆。" },
+  { section: "10A", q: "上涨通道中，大阳线后常跟十字星或阴线，跟随性越来越差。你更该警惕：", opts: ["买盘更强了", "卖盘压力在上升，通道可能转为区间甚至向下破", "一定继续大涨", "缺口必然扩大"], a: 1, exp: "通道后期最关键的不是涨没涨，而是阳线后有没有好的跟随。" },
+
+  { section: "10B", q: "下跌通道里，向下突破刚出现就被下一根强阳线完全扭回，随后价格突破通道高点。更合理的动作是：", opts: ["顺着突破考虑做多", "继续追空", "在区间中间卖出", "等待再次创新低才看"], a: 0, exp: "失败的向下突破加突破通道高点，是多头夺回控制的典型证据。" },
+  { section: "10B", q: "上升通道里出现三推楔形、较大的阴线和更频繁回调。课程更提醒你：", opts: ["优先防范向下跌破并转区间", "继续追涨最安全", "一定会加速向上", "与通道强弱无关"], a: 0, exp: "上升通道累积卖压后，更常见的结局是向下跌破趋势线并进入震荡。" },
+
+  { section: "11A", q: "震荡区刚结束后市场出现跳空并持续沿同方向发展。回头看，这个缺口更常被称为：", opts: ["突破缺口", "普通缺口", "衰竭缺口", "实体缺口"], a: 0, exp: "如果后续真的发展成趋势，这个缺口事后就可归类为突破缺口。" },
+  { section: "11A", q: "上涨已经持续 25 根K线，接近量测目标和阻力位时又出现巨大阳线。此时更需要警惕的是：", opts: ["这是全新的起涨点", "它可能是衰竭缺口而不是新的强势起点", "只可能继续加速", "一定不能回调"], a: 1, exp: "趋势运行很久后再冒出的超大阳线，常常更像最后的疯狂。" },
+
+  { section: "11B", q: "多头趋势运行了 20 多根K线，首次出现完全落到均线下方的K线。更符合课程的理解是：", opts: ["多头一定结束", "很多短线会先买回测高点，但也要警惕 40% 重大反转风险", "这是无意义噪音", "只能立刻做空"], a: 1, exp: "20 缺口K线先常带来趋势恢复，但已经在提前预警趋势开始老化。" },
+  { section: "11B", q: "交易区间顶部在趋势后期突然强力向上突破，但很快被打回突破点下方。更合理的解读是：", opts: ["一定是测量缺口", "更像衰竭缺口，追高不如等回测后找卖点", "无论如何都该追多", "只是普通均线回踩"], a: 1, exp: "晚期强突破如果迅速补缺，常常是第二段上涨陷阱或衰竭缺口。" },
+
+  { section: "11C", q: "强上涨后出现微小缺口，后续回调始终无法把它补掉。更合理的推断是：", opts: ["空头更强", "空头被困，缺口保持开启有利于继续上涨", "一定转为区间", "说明缺口没意义"], a: 1, exp: "回调补不掉缺口，意味着逆势空头开始被困，常推动下一腿上涨。" },
+  { section: "11C", q: "向上跳空开盘后，价格立即反向下跌并收出空头棒。课程更提醒你：", opts: ["这是更强的看多信号", "可能是失败突破，趋势或将转为横盘甚至反转", "跳空一定继续", "只看开盘不看收盘"], a: 1, exp: "跳空本身不够，关键是后续能否维持；立即反转常是危险信号。" },
+
+  { section: "11D", q: "熊市微通道里连续出现开放缺口，回调始终补不掉。此时更合理的计划是：", opts: ["持续寻找卖点，不轻易抄底", "积极逆势买入", "只做区间中间", "等待任何阳线就买"], a: 0, exp: "多个开放缺口说明空头极强，在这种环境里逆势买入没有优势。" },
+  { section: "11D", q: "紧凑熊市通道开始频繁补缺，买方低位买入也能获利。更合理的预期是：", opts: ["马上变成大牛市", "更可能先转为宽通道或区间，而非立刻反转", "熊市更健康了", "缺口逻辑无效"], a: 1, exp: "缺口开始关闭意味着趋势减弱，但从极窄通道到反向大趋势通常还需要过渡。" }
+];
+
+const quizExpansionSpecs = [
+  ["08A", "趋势K线", "实体大、影线短、收盘靠近极值", ["实体小且影线长", "重叠很多且收在中间", "只要K线很小也算趋势"], "趋势K线强调实体、收盘位置和急迫性。"],
+  ["08A", "交易区间K线", "实体小、重叠多、收盘更靠近中间", ["实体大且影线短", "连续收在极值附近", "一出现就说明趋势启动"], "交易区间K线反映的是多空平衡与重叠。"],
+  ["08A", "K线性质判断", "必须结合左侧背景，而不是孤立看单根大小", ["只看颜色即可", "只看实体大小即可", "只看时间周期即可"], "背景决定单根K线到底属于趋势还是区间。"],
+  ["08A", "上影线", "常表示向上突破失败后被压回", ["表示多头完全控制", "表示趋势一定延续", "等同于测量缺口"], "影线本质上是失败突破留下的痕迹。"],
+  ["08A", "信号K线与入场K线", "信号K线通常在入场前一根，也可能与入场同根", ["永远是同一根", "永远相隔两根", "只能出现在反转里"], "有时可以挂突破单，有时也可以直接收盘入场。"],
+  ["08A", "背景优先", "背景越好，信号K线本身的重要性越低", ["信号越差越不能做", "只要信号漂亮就不看背景", "背景和信号权重完全一样"], "这是 Brooks 非常核心的判断原则。"],
+
+  ["08B", "牛市反转K线最低要求", "收盘要在本K线中点上方", ["必须是阳线并且没有下影线", "必须突破20根高点", "必须大于前一根实体两倍"], "哪怕是阴线，只要收在中点上方也可视为牛反转。"],
+  ["08B", "熊市反转K线最低要求", "收盘要在本K线中点下方", ["必须是阳线并且收高", "必须跌破均线", "必须大于前一根K线两倍"], "对做空反转来说，收盘位置比颜色更重要。"],
+  ["08B", "强反转位置", "双顶双底、楔形等极端位置更有意义", ["交易区间中间最强", "任何位置都一样", "只要影线长就足够"], "反转信号的质量很大程度取决于出现的位置。"],
+  ["08B", "多K线反转", "高周期上常可压缩成单根反转K线", ["只能在当前周期理解", "必须连续三根才算", "与高周期无关"], "不要为了找完美单K而错过眼前的多K线反转。"],
+  ["08B", "内包线", "高不超前高且低不破前低", ["高低点都超出前K线", "收盘高于前收盘", "实体一定更小"], "内包线常是良好语境中的优质信号。"],
+  ["08B", "外包线", "必须回到语境里判断，不能孤立追单", ["本身必然等于反转", "做多时永远追外包线上方", "只要出现就说明突破成功"], "外包线既可能是陷阱，也可能是高周期反转的一部分。"],
+
+  ["08C", "窄幅震荡", "超过10根后更适合等突破，而不是频繁交易", ["横盘越久越适合在中间追单", "只要有外包线就重仓", "10根后必须做反向单"], "区间太窄时，交易性价比会迅速下降。"],
+  ["08C", "II/IOI/OIO", "本质上都是突破模式，小周期里常像三角形", ["都属于双顶双底", "方向天然固定向上", "只适用于日线"], "这些模式的关键是等待语境决定方向。"],
+  ["08C", "窄幅震荡早期试单", "只能在区间边缘且背景良好时尝试", ["只要在中间就最安全", "任何地方都可突破追单", "不看背景只看K线颜色"], "Brooks 允许早期交易，但前提是位置和背景都要站得住。"],
+  ["08C", "趋势末端II", "要优先防范最终旗形反转", ["更常代表趋势加速", "一定向上突破", "一定向下突破"], "趋势末端的 II 不该按中继惯性去看。"],
+  ["08C", "均线附近II", "在趋势中续里常对应 H2/L2 旗形机会", ["最适合逆势抢顶底", "只能理解成交易区间", "必须等20根横盘后才有效"], "它的意义在于回调结束、趋势恢复。"],
+  ["08C", "信号方向一致性", "信号K线实体方向与交易方向一致时胜率更高", ["信号棒颜色从不重要", "相反颜色胜率更高", "只要是十字星就最好"], "方向一致意味着顺着市场当前的短期动能。"],
+
+  ["08D", "交易形态", "真正的交易形态等于信号K线加市场背景", ["只要信号K线大就够", "只要止损小就够", "只要在均线附近就够"], "好的信号不代表好的交易，背景必须同步支持。"],
+  ["08D", "交易区间铁律", "更适合在两端做反转，而不是在中间赌突破", ["在顶部更适合买", "在底部更适合卖", "80%的突破都会成功"], "区间里的大多数突破最终都会失败。"],
+  ["08D", "第二信号", "第一信号较弱或背景一般时，第二信号通常更稳", ["第一信号一定最强", "第二信号止损更小所以一定更好", "第三信号总是最优"], "第二信号常意味着第一次尝试失败后的再次恢复。"],
+  ["08D", "强趋势逆势", "需要强反转K线和跟随确认，不能用弱信号硬做", ["任何反向十字星都能做", "只要盈亏比大就能做", "只要出现影线就能做"], "逆势门槛远高于顺势交易。"],
+  ["08D", "紧凑通道第一反转", "更常只是次级回调，而不是趋势反转", ["通常就是大反转起点", "一定要立即逆势", "只适合加仓反向"], "紧凑通道里的第一次反转往往只是短暂喘息。"],
+  ["08D", "区间顶部买入信号", "常常只是买入陷阱，更应该想到卖区逻辑", ["只要信号好就可以追多", "顶部买入胜率最高", "区间顶部没有阻力意义"], "背景如果是卖区，再漂亮的买信号也会打折。"],
+
+  ["09A", "多头趋势回调定义", "当前K线低点低于前一根低点", ["当前K线高点高于前高", "当前K线收阴", "出现任何影线"], "回调定义是结构性的，不是只看颜色。"],
+  ["09A", "空头趋势回调定义", "当前K线高点高于前一根高点", ["当前K线低点更低", "当前K线收阳", "实体大于前一根"], "在熊市里，向上波动才构成回调。"],
+  ["09A", "隐含回调", "当前周期看不到，但更小周期可能已经形成", ["只会出现在更大周期", "永远等同于实际回调", "一定发生在50%位置"], "Brooks 很强调不同周期之间的映射关系。"],
+  ["09A", "长回调", "超过20根后，趋势恢复概率下降，市场更中性", ["超过20根后更适合追趋势", "越长越说明趋势强", "长回调必然反转"], "时间越长，原趋势的惯性就越弱。"],
+  ["09A", "50%回调", "是常见的心理和数学参考入场区", ["意味着趋势结束", "只能用来做逆势", "一定比 H2 更重要"], "很多顺势交易者会在 50% 一带布局。"],
+  ["09A", "计数意义", "H1/H2 统计上涨恢复尝试，L1/L2 统计下跌恢复尝试", ["是在统计成交量大小", "只用于日线图", "只在双顶双底时有用"], "计数帮助判断哪一次趋势恢复更可能成功。"],
+
+  ["09B", "双底的交易含义", "本质是第二次止跌后的 H2 买点", ["本质是第二次止涨后的 L2 卖点", "只要出现就代表主要趋势反转", "和 H/L 计数体系没有关系"], "双底最重要的不是外形，而是它在语境里常代表第二次止跌后的顺势恢复。"],
+  ["09B", "双顶的交易含义", "本质是第二次止涨失败后的 L2 卖点", ["本质是第二次止跌后的 H2 买点", "天然属于牛旗", "只在交易区间里才有效"], "双顶常见于熊市反弹或上涨末端，重点是第二次上冲失败而不是名称本身。"],
+  ["09B", "楔形顶部的第三推", "更常对应 L3 卖出尝试", ["更常对应 H3 买入尝试", "一定比双顶更强", "只要第三推创新高就必须追多"], "楔形顶部强调第三次推升后的衰竭感，因此语言上常落在 L3。"],
+  ["09B", "楔形底部的第三推", "更常对应 H3 买入尝试", ["更常对应 L3 卖出尝试", "只要是第三推就一定反转", "必须先突破均线才算"], "楔形底部的关键是第三次止跌后空头衰竭、多头开始接管。"],
+  ["09B", "H4/L4 的理解", "通常可拆成更小级别的 H2/L2 反复尝试", ["是与 H2/L2 无关的新体系", "只会出现在周线月线", "一出现胜率就明显高于其他形态"], "复杂反转往往不是全新结构，而是小级别重复尝试叠在一起。"],
+  ["09B", "强趋势里的双顶双底", "逆势质量会下降，应先尊重主趋势", ["强趋势最适合抄顶抄底", "双顶双底在强趋势里一定更有效", "只要形态漂亮就能忽略背景"], "强趋势中的反转形态，很多只会形成次级回调，而不会立刻改趋势。"],
+
+  ["09C", "无限回调", "通常是超过20根、且走成紧密小通道的回调", ["只要两三根就算", "必须配合跳空", "只要碰到均线就算"], "无限回调强调的是时间长度和紧凑性。"],
+  ["09C", "无限回调后的概率", "延续与反转更接近五五开", ["趋势恢复概率大于90%", "反转概率一定大于80%", "必然变成大趋势"], "市场在这里已经接近中性。"],
+  ["09C", "多周期分析", "看不懂小周期时，应先切到更大周期理解结构", ["越看不懂越切更小周期", "只要看当前周期就够", "只看指标不看结构"], "高周期更容易把噪音压缩掉。"],
+  ["09C", "H2强买点", "一部分原因是逆势空头在第二次上涨时被迫离场", ["因为第一次上涨一定失败", "因为止损永远更小", "因为均线会自动支撑"], "顺势入场和逆势止损叠加，才让 H2 更强。"],
+  ["09C", "L2强卖点", "一部分原因是逆势多头在第二次下跌时被迫离场", ["因为所有空头都在第一次进场", "因为 L2 只在区间里有效", "因为 L2 一定跌破前低很多"], "L2 的力量同样来自顺势与逆势的共振。"],
+  ["09C", "逆势离场", "上涨里的空头应在 H2 离场，下跌里的多头应在 L2 离场", ["逆势仓位应一直死扛", "只在均线穿越时离场", "只在出现缺口时离场"], "Brooks 把 H2/L2 看成逆势单的关键止损点。"],
+
+  ["10A", "买压", "常表现为长下影线、连阳、大实体和高收盘", ["常表现为长上影线和低收盘", "只表现为十字星增多", "只表现为成交量放大"], "这些特征都说明低位买盘积极、上方抛压有限。"],
+  ["10A", "卖压", "常表现为长上影线、连阴、大实体和低收盘", ["常表现为长下影线和高收盘", "只表现为区间变窄", "只表现为均线走平"], "卖压看的也是收盘位置与反弹质量。"],
+  ["10A", "向上缺口", "当前K线最低价高于前一根最高价", ["当前收盘高于前收盘", "当前开盘高于均线", "当前实体比前一根更大"], "真正的跳空看的是整个价格区间是否留白。"],
+  ["10A", "向下缺口", "当前K线最高价低于前一根最低价", ["当前收盘更低", "当前低点更低", "当前实体为阴线"], "这说明价格在上一根低点下方重新定价。"],
+  ["10A", "缺口类型", "常分为突破缺口、测量缺口、衰竭缺口和普通缺口", ["只分上涨缺口和下跌缺口", "只分均线缺口和实体缺口", "所有缺口都只有一种意义"], "不同缺口代表的阶段和用途完全不同。"],
+  ["10A", "通道跟随性", "阳线后常跟十字星或阴线，说明原方向力量在减弱", ["说明趋势一定加速", "说明空头完全失败", "说明只能看均线"], "通道末期更应关注跟随质量，而不是单根爆发。"],
+
+  ["10B", "交易区间评估", "关键是看哪一方的压力在持续累积", ["关键是只在区间中间交易", "关键是忽略收盘位置", "关键是默认向上突破"], "区间里最重要的是读力量，而不是预测。"],
+  ["10B", "上升通道", "大约更常向下跌破并演变成交易区间", ["更常直接向上爆发", "跌破后一定转熊市", "只要创新高就不会结束"], "Brooks 对通道结局有明显的统计倾向。"],
+  ["10B", "下跌通道", "大约更常向上突破并演变成交易区间", ["更常继续向下加速", "一跌破就代表主跌开始", "只要创新低就不能买"], "下跌通道常被视作多头旗形。"],
+  ["10B", "熊通道长下影线", "意味着更低价格被拒绝，买盘在吸收", ["意味着空头更强", "意味着趋势马上结束", "意味着只能做空"], "长下影线常是买方和空头短线回补共同造成的。"],
+  ["10B", "失败的向下突破", "若紧跟强阳线，说明卖方失去控制", ["说明空头更稳固", "说明只能继续追空", "说明只是无意义噪音"], "失败突破本身就是反向机会的重要来源。"],
+  ["10B", "多头控盘后的止损", "常放在最近信号K线或最近低点下方", ["不用止损", "放在区间中间", "放在开盘价即可"], "如果多头真的控盘，就不应再跌回关键低点下方。"],
+
+  ["11A", "Brooks 的缺口定义", "价格与任意支撑或阻力之间的空间都可看作缺口", ["只有日线跳空才算缺口", "只有开盘价差才算", "只有影线不重叠才算"], "这一定义比传统图表学更宽。"],
+  ["11A", "日线与分钟线缺口", "真正的视觉跳空在日线更常见，在活跃分钟图更少见", ["分钟图更常见真正跳空", "周线比日线更常见", "月线最常见"], "Brooks 特别提醒不要把所有缺口都理解成日线跳空。"],
+  ["11A", "突破缺口", "通常出现在震荡结束后或趋势刚启动时", ["通常只在趋势尾声出现", "只会出现在均线附近", "一般都没有意义"], "它的重点在于市场刚摆脱平衡。"],
+  ["11A", "测量缺口", "常用于推算后续的等距运动目标", ["主要用于确认顶部", "主要用于判断成交量", "只用于止损摆放"], "中继缺口最大的价值是量测。"],
+  ["11A", "衰竭缺口", "更常出现在趋势后期，回补后警惕区间或反转", ["越晚越强", "绝不会回补", "只要出现就说明趋势刚开始"], "它代表的是最后一波急迫，而不是新的平衡。"],
+  ["11A", "岛形反转", "是反转信号，但很多最后仍会演化成震荡", ["出现后必然走出长期趋势", "只出现在月线", "必须两个缺口完全同价"], "Brooks 对岛形反转的看法比传统教科书更保守。"],
+
+  ["11B", "移动平均缺口K线", "常出现在趋势已经远离均线20根左右之后", ["每次碰均线都算", "只要均线拐头就算", "只能出现在日线"], "20 缺口K线描述的是趋势走得太远后的首次显著回抽。"],
+  ["11B", "多头趋势里的20缺口K线", "首次落到均线下方后，趋势仍可能恢复，但要警惕衰老", ["一出现就说明熊市开始", "只能立刻做空", "说明趋势会更快加速"], "它是预警，不是自动反转按钮。"],
+  ["11B", "空头趋势里的20缺口K线", "首次完全站到均线上方时，多头力量正在增强", ["说明空头更强", "说明只能继续做空", "和趋势强弱无关"], "空头趋势里同样存在对称逻辑。"],
+  ["11B", "晚期强突破", "若出现在阻力和量测目标附近，更要防衰竭而不是追价", ["越晚越适合追", "只要大阳线就无条件买", "只有均线位置重要"], "位置和阶段决定大阳线到底是中继还是衰竭。"],
+  ["11B", "衰竭缺口确认", "关键看缺口是否被快速回补关闭", ["关键看颜色是否相反", "关键看是否触碰均线", "关键看是否创出新高"], "回补说明市场无法维持那股突然爆发的力量。"],
+  ["11B", "趋势后期巨大阴线", "既可能是最后的疯狂，也可能是抛售高潮", ["通常代表新一轮加速起点", "一定还能跌很远", "与阶段无关"], "越到后期，越不能把极端K线简单当成延续。"],
+
+  ["11C", "微小缺口", "是非常小、容易被忽略的价格留白", ["只指很大的视觉跳空", "只指开盘价差", "只指实体完全分离"], "小缺口看似不起眼，却能反映强弱。"],
+  ["11C", "缺口开盘", "体现的是一方非常急迫，愿意以更差价格成交", ["通常代表市场停滞", "通常说明没有方向", "只是一种随机波动"], "跳空开盘本身就是压力的表现。"],
+  ["11C", "实体缺口", "指两根K线实体不重叠，即使影线可以重叠", ["指影线不重叠", "指开盘高于前收盘", "指收盘价一定跳空"], "实体缺口在线形图上常更明显。"],
+  ["11C", "保持开启的缺口", "通常说明原方向控制力仍在", ["说明趋势马上结束", "说明缺口没有意义", "说明只能看成交量"], "缺口能否维持，比缺口本身更重要。"],
+  ["11C", "快速补缺", "通常说明趋势力量减弱，后续更容易横盘或反转", ["说明趋势更强", "说明是更好的追单点", "说明缺口无关紧要"], "一旦补缺，原先的急迫性就被打折了。"],
+  ["11C", "被困交易者", "缺口不补常让逆势一方被困，从而推动下一腿运动", ["说明对手盘完全不重要", "只会影响止损不会影响趋势", "只存在于日线图"], "被困的一方被迫止损，会成为顺势推动力。"],
+
+  ["11D", "开放缺口", "代表原趋势力量强，顺势思路优先", ["代表趋势结束", "代表最适合逆势", "只代表成交量变化"], "缺口长期保持开启，本身就是力量展示。"],
+  ["11D", "多个熊市开放缺口", "更该找卖点，而不是积极抄底", ["最适合买入反转", "说明区间马上开始", "代表空头已经衰竭"], "连续开放缺口是极强熊势的典型特征。"],
+  ["11D", "阶梯模式", "本质上是缺口不断被填补，趋势开始变弱", ["代表趋势更健康", "代表一定立刻反转", "只会出现在牛市"], "通道从紧变宽，往往就是通过补缺完成的。"],
+  ["11D", "熊市里买方获利", "如果买方开始能在新低附近赚钱，说明熊势有问题", ["说明熊势更强", "说明空头更容易赢", "说明只该继续追空"], "对手盘开始赚钱，常是原趋势走坏的信号。"],
+  ["11D", "紧凑通道反转", "更常只是次级反转，先转宽通道或区间，而非立刻反牛", ["通常直接反成主趋势", "一定形成V反", "不可能演化为区间"], "Brooks 很强调极窄通道到反向趋势之间的过渡。"],
+  ["11D", "牛市开放缺口", "如果低点始终守在前高之上，应优先站在买方一侧", ["这种时候更该找空", "说明上涨快结束", "说明只能等待均线"], "开放向上缺口意味着买方始终不给回踩机会。"]
+];
+
+const scenarioExpansionSpecs = [
+  ["08A", "强趋势里连续出现几根小阳线，虽然实体不大，但高低点持续抬高", "仍按趋势K线理解，优先顺势", ["把它们都当成交易区间K线", "立即逆势做空", "只因为实体小就放弃"], "强背景下，小实体也可能是趋势K线。"],
+  ["08A", "交易区间中部突然出现一根很大的反转棒，但前后K线重叠很多", "先看作区间波动，不把单根大棒当成足够理由", ["只凭这根大棒重仓追单", "忽略左侧背景", "默认主趋势已经反转"], "区间中部的大棒常常没有足够后续。"],
+  ["08A", "上涨通道里的回调末端出现一根收盘在高点附近的阳线", "把它当作信号K线，考虑下一根突破买入", ["只要不是完美信号就不做", "一定要等另一个周期确认", "立刻反向做空"], "顺势背景会放大普通信号的价值。"],
+  ["08A", "你为了找完美信号，不断切换时间周期，直到看到一根最漂亮的K线", "停止切换图表，回到背景本身做判断", ["继续寻找更完美的图", "只以最漂亮的K线为准", "认为周期越多胜率越高"], "过度寻找完美信号是典型新手陷阱。"],
+  ["08A", "一根K线上方出现长上影线，且收盘回到中间附近", "优先理解成上破失败，而不是强多头延续", ["理解成多头完全控盘", "理解成必须追多", "理解成量测目标已经完成"], "影线代表失败突破留下的痕迹。"],
+
+  ["08B", "牛市回调到双底附近，信号K线重新收在中点上方", "优先在高点上方挂突破多单", ["跌破低点去做空", "只在区间中间交易", "忽略这根信号K线"], "这就是典型牛市反转信号。"],
+  ["08B", "买高潮后的双顶位置出现大阴线，收盘靠近低点", "把它看成更强的做空背景", ["只因为前面是牛市就继续追多", "忽略位置只看颜色", "在阴线高点上方继续追买"], "位置加上信号质量，才让做空更有优势。"],
+  ["08B", "你在当前周期看到三根K线组成的明显反转，却没有完美单根反转棒", "仍按多K线反转处理，不必执着完美单K", ["放弃交易直到出现单根完美棒", "认为它不算反转", "只切到更小周期找理由"], "多K线反转在高周期上本就可能压缩成单根。"],
+  ["08B", "牛市回调末端出现一根内包线，位置在更高低点附近", "可以把它当成较好的信号，而不是自动忽略", ["因为是内包线就一定无效", "在区间中间追空", "只用外包线入场"], "好的位置会提升内包线的质量。"],
+  ["08B", "外包大阴线出现在区间中央，没有打穿关键支撑", "不要孤立追空，先回到语境里判断", ["只要是外包线就无脑追空", "直接当成熊市启动", "认为外包线永远比反转棒强"], "外包线必须和位置、背景一起看。"],
+
+  ["08C", "市场已经横盘 15 根K线，区间非常狭窄", "停止中间位置的交易，耐心等突破", ["继续在中间高频下单", "只因为有影线就追反向", "认为横盘越久越适合追单"], "窄幅震荡过久的最大问题是性价比差。"],
+  ["08C", "区间底部三分之一处出现一根不错的阳线信号，且左侧是明显牛市背景", "允许尝试低位做多", ["在区间底部反而做空", "忽略背景只等 20 根横盘", "去区间中间追涨"], "窄幅震荡早期只能在边缘和好背景里试单。"],
+  ["08C", "趋势末端第二腿上涨后形成 II，第二根内包线又偏弱", "优先防范最终旗形，而不是默认继续涨", ["把它当成最强中继", "立即在区间中间追多", "忽略第二根K线质量"], "趋势末端的 II 经常是最后一次整理。"],
+  ["08C", "均线附近形成 II，第二根内包线收成阳线", "更偏向把它理解为 H2/L2 型旗形延续", ["只把它当成无方向区间", "优先逆势做反转", "必须等 20 根K线后才做"], "趋势中续里的 II 更像回调结束。"],
+  ["08C", "牛市均线上方形成 IOI，第三根是强阳线并收近高点", "顺着牛市语境优先找多", ["因为是整理就只看空", "只在突破后反向", "不看第三根K线质量"], "IOI 的方向需要由背景和信号质量共同决定。"],
+
+  ["08D", "交易区间顶部出现一个漂亮的买入信号，但左侧同价位已多次受阻", "把它当买入陷阱，更偏向卖区思路", ["只看信号K线立刻追多", "忽略顶部阻力", "认为区间顶部更适合买"], "背景如果处在卖区，买入信号会大打折扣。"],
+  ["08D", "楔形顶部后出现第一根一般般的看跌信号棒", "更适合等待第二信号确认", ["立刻重仓做空", "只因为是第一根就最高概率", "完全忽略楔形结构"], "当第一信号不够强时，第二信号更有意义。"],
+  ["08D", "强牛市里只出现一根小阴线，你想立刻逆势做空", "先等更强反转和跟随，而不是用弱棒硬逆势", ["马上重仓做空", "把任何反向K线都当拐点", "认为强趋势里的逆势更安全"], "强趋势里的逆势必须提高门槛。"],
+  ["08D", "紧凑熊通道里首次出现一根看似不错的阳线反转棒", "更可能只是小反弹，不急着把它当大反转", ["把它直接当牛市起点", "立即重仓抄底", "忽略通道紧凑程度"], "紧凑通道第一反转大多只是喘息。"],
+  ["08D", "交易区间底部出现卖出信号棒，看起来非常强", "更要提防卖出陷阱，优先想买区逻辑", ["因为棒强就无脑追空", "只按颜色决定方向", "认为区间底部最适合做空"], "区间底部是买区，卖信号往往是陷阱。"],
+
+  ["09A", "上涨趋势回调到 50% 附近，随后走出 H2", "把它理解成高概率顺势买点", ["优先逆势做空", "认为趋势已经失败", "只在更小周期找空点"], "50% 回调配 H2 是课程里的经典顺势结构。"],
+  ["09A", "一段牛市回调已经持续 22 根，而且走成紧密通道", "把它视作更中性的环境，而不是默认趋势立刻恢复", ["继续盲目追多", "默认一定反转", "忽略时间长度"], "回调太久时，趋势恢复优势会下降。"],
+  ["09A", "5分钟图几乎没看到回调，但1分钟图已经出现一次明显回调", "把它理解成隐含回调，而不是完全没有回调", ["认为只能算随机波动", "认为高周期永远比低周期多结构", "否认回调存在"], "不同周期会改变结构显现方式。"],
+  ["09A", "一段牛市已经连续打出第 6 个 H1", "警惕趋势老化，不要像早期一样随便追高", ["说明趋势越来越健康", "说明下一次追高最安全", "说明一定立刻大跌"], "太多次 H1 往往意味着顺畅度下降。"],
+  ["09A", "熊市反弹后形成 L2，并且信号棒质量不错", "更偏向顺着熊势卖出", ["把 L2 当抄底信号", "认为计数不重要", "只看反弹的颜色"], "L2 的意义就是第二次恢复下跌。"],
+
+  ["09B", "牛市回调两次下探后，第二次止跌处又出现强阳线信号棒", "优先按 H2 / 小双底的顺势买点处理", ["把它当成 L2 卖点", "忽略双底只等跌破", "只在区间中间追空"], "两次下探后再恢复，正是 09B 里双底与 H2 连起来的典型语境。"],
+  ["09B", "熊市反弹到压力位后第二次上冲失败，并收出看跌信号棒", "优先按 L2 / 小双顶的顺势卖点处理", ["把它当成强势抄底机会", "只因为前面跌多了就做多", "忽略第二次上冲失败"], "在熊市里，双顶最有价值的时候往往就是第二次止涨失败并恢复下跌。"],
+  ["09B", "上升通道后半段已经走出第三推，创新高后跟随却明显变差", "优先防范楔形顶部后的向下反转", ["继续把第三推当成最安全追多点", "只在第四推后才开始警惕", "因为创新高就说明更强"], "09B 的楔形顶部不是看新高本身，而是看第三推后买盘是否开始衰竭。"],
+  ["09B", "熊市末端连续三次下探，第三次下探后市场却收出强阳线", "把它优先理解成 H3 式楔形底部机会", ["把它理解成 L3 卖出继续加空", "认为第三推和做多无关", "必须等回到前高上方才算"], "楔形底部的核心是第三次止跌后空头衰竭，多头开始争取至少一段修复。"],
+  ["09B", "一个复杂顶部反复嵌套、看起来像 H4/L4 那样的结构", "先拆回更小级别的 H2/L2 去理解", ["把它当成与 H2/L2 无关的新形态", "只按单根信号棒做决定", "完全不看推动与重复尝试"], "H4/L4 难在外观复杂，但理解它最好的办法仍然是拆回小级别重复尝试。"],
+
+  ["09C", "上涨后的回调已经走了 20 多根，而且每次反弹都很短", "把它视作无限回调，市场更接近中性", ["仍当成普通牛旗", "默认一定反转", "忽略时间长度"], "无限回调的关键就是时间拉长与通道紧密。"],
+  ["09C", "当前1分钟图非常混乱，你越看越看不懂", "先切到更大周期整理结构", ["切到更小周期继续找更多噪音", "只看指标不看图表", "立刻下单测试"], "Brooks 的习惯是先拉大周期找结构。"],
+  ["09C", "你在牛市里逆势做空，结果行情又打出 H2", "该在 H2 认输离场，而不是继续扛", ["继续加空", "只等出现双顶才出", "因为第一次反转没成功就继续拿"], "H2 是逆势空头很关键的止损点。"],
+  ["09C", "你在熊市里逆势做多，结果行情再度走出 L2", "更合理的动作是平掉多单", ["继续补仓做多", "只等阳线收盘再出", "认为 L2 与多头无关"], "L2 是空头恢复的重要节点。"],
+  ["09C", "无限回调之后终于出现一波强突破并伴随跟随", "更应预期至少还有第二腿运动", ["只把它看成一次随机刺穿", "立即反向做单", "认为突破后肯定回到原区间"], "强突破带跟随时，市场往往会再走一腿。"],
+
+  ["10A", "交易区间里阳线越来越多，且收盘不断靠近高点", "判断买压在累积，向上突破概率增加", ["判断卖压更强", "认为这和突破方向无关", "只要有影线就看空"], "区间里要读的是哪一方越来越主动。"],
+  ["10A", "上升通道中，大阳线后经常接十字星或阴线", "说明买盘跟随性变差，卖压在上升", ["说明多头越来越强", "说明适合继续追涨", "说明趋势会更快加速"], "跟随性差是通道末期的重要警报。"],
+  ["10A", "下跌通道中不断出现长下影线，且向下突破常被拉回", "说明买方压力开始累积", ["说明空头更急迫", "说明只能继续卖出", "说明和买卖压力无关"], "长下影线反映更低价格被拒绝。"],
+  ["10A", "震荡之后出现真正跳空并沿方向继续走", "更应把它理解成强化了突破意义", ["认为缺口毫无参考价值", "认为必须立刻逆向", "认为一定是衰竭缺口"], "突破配合缺口，通常意味着更强的重新定价。"],
+  ["10A", "出现缺口后几根K线内就被完全补掉", "说明这次动能不够强", ["说明原趋势更强", "说明更适合追单", "说明只要有缺口就成功"], "快速补缺常常意味着缺口没有太大预测价值。"],
+
+  ["10B", "区间里出现更高低点、更多强阳线，且多次高收盘", "更偏向上破准备，而不是下破", ["更偏向下破", "与突破方向无关", "说明只能等20根后再看"], "区间里要看哪一方在持续赢得收盘。"],
+  ["10B", "上升通道后半段出现楔形、回调增多和大阴线", "更应防范向下跌破并转震荡", ["更适合继续追多", "说明突破向上概率更高", "说明趋势已完全结束并反转"], "上升通道更多是转区间，而不是永远加速。"],
+  ["10B", "下跌通道里刚向下破位，下一根却出现强阳线并收回区间", "把它看成失败突破和潜在买点", ["继续顺着假破位追空", "忽略这根强阳线", "只把它当成随机噪音"], "失败突破本身就是反向交易机会。"],
+  ["10B", "你已经明确看到市场重新变成 always in long", "即使出现小阴线，也可更偏向把它看成失败反转", ["每根阴线都该逆势做空", "只要不是阳线就不能买", "只能等双底"], "始终持仓判断会影响你如何解释小回调。"],
+  ["10B", "熊通道中新低附近不断出现买盘获利的迹象", "说明通道可能在转宽，不能再像早期那样死追空", ["说明熊势更健康", "说明只能继续卖新低", "说明长下影线都无效"], "对手盘开始赚钱，通常是趋势减弱的表现。"],
+
+  ["11A", "震荡结束后出现缺口并很快走出新趋势", "回头看这是突破缺口", ["这是衰竭缺口", "这是普通缺口", "这是岛形顶部"], "突破缺口的价值来自后续发展成趋势。"],
+  ["11A", "趋势走了一大段后又在目标位附近冒出巨大阳线", "更应先提防衰竭，而不是无脑追涨", ["把它当成新的起涨点", "认为越晚越安全", "因为是阳线所以必买"], "阶段和位置决定大阳线的意义。"],
+  ["11A", "中途出现一个清晰缺口，交易者用它来推算下一目标位", "这是在把它当测量缺口使用", ["这是在确认顶部", "这是在定义岛形", "这是在看均线缺口"], "测量缺口最大的实战价值是量测。"],
+  ["11A", "市场出现岛形反转形态，但随后并未走出长趋势", "这并不违背课程观点", ["说明岛形就一定失效", "说明岛形必须马上大趋势", "说明岛形只在月线有效"], "Brooks 本来就认为很多岛形最终仍会转回区间。"],
+  ["11A", "交易区间内部偶然出现一个小缺口", "通常不该赋予过高预测意义", ["通常必然引发大趋势", "通常必然形成岛形", "只要有缺口就要追"], "区间内部的缺口大多缺乏持续性。"],
+
+  ["11B", "多头趋势已经远离均线 20 多根，第一次有K线完全落到均线下方", "先理解成 20 缺口K线，而不是自动大反转", ["立即认定熊市启动", "忽略它的预警意义", "只要触均线都同样重要"], "它先是预警，然后才谈是否反转。"],
+  ["11B", "趋势后期在阻力位上方突然强力突破，但很快被完全打回", "更像衰竭缺口而不是新一轮主升", ["更适合继续追多", "一定是测量缺口", "说明阻力已经完全失效"], "晚期强突破失败，常是最后的疯狂。"],
+  ["11B", "熊市持续很久后突然出现一根极大的阴线，空头情绪爆棚", "先提防抛售高潮，而不是默认它还能无限延续", ["一定还会继续暴跌很远", "越大阴线越适合追空", "这种K线和阶段无关"], "趋势末期的极端棒经常是高潮。"],
+  ["11B", "强突破后市场很快回补掉缺口区域", "这是衰竭缺口被确认的重要信号", ["说明突破更强了", "说明只适合追单", "说明缺口无意义"], "能否维持突破，是区分中继和衰竭的关键。"],
+
+  ["11C", "一轮上涨后的微小缺口迟迟补不掉，回调都停在它上方", "说明多头强，空头容易被困", ["说明多头更弱", "说明一定转区间", "说明缺口没价值"], "缺口保持开启，本身就是强度表现。"],
+  ["11C", "向上跳空开盘后，价格很快反杀并收出空头棒", "这更像失败突破，而不是更强看多", ["说明多头最强", "说明跳空就必须追", "说明只能等均线"], "缺口之后的跟随，决定缺口有没有价值。"],
+  ["11C", "两根K线影线重叠，但实体之间没有任何重叠", "这仍可视为实体缺口", ["这不算任何缺口", "只算开盘缺口", "必须影线也完全分离才算"], "实体缺口看的不是影线，而是实体区。"],
+  ["11C", "上涨中缺口迟迟不补，逆势空头被迫在更高处回补", "这会推动价格更快上行", ["这和后续走势无关", "只影响成交量不影响价格", "说明多头在衰竭"], "被困交易者的止损会转化成顺势推动。"],
+
+  ["11D", "熊市微通道里一连串开放缺口始终不补", "只能优先找卖点，而不是急着抄底", ["越多缺口越适合抄底", "说明趋势要结束", "只要看到阳线就该买"], "开放缺口成串，是最强的熊市力量之一。"],
+  ["11D", "原本紧凑的熊通道开始频繁补缺，市场像走楼梯一样", "说明趋势在减弱，更可能转宽通道或区间", ["说明熊势更健康", "说明马上V反转牛市", "说明只能继续追空"], "阶梯模式就是缺口被不断填补的表现。"],
+  ["11D", "熊市里买方开始能在新低附近赚钱并顺利反弹", "说明原趋势已经出问题", ["说明熊势最稳", "说明卖方控制更强", "说明买方仍完全无力"], "对手盘开始赚钱，是趋势减弱的重要迹象。"],
+  ["11D", "牛市中某根K线低点一直守在前高之上，形成开放向上缺口", "更应该站在买方一侧，而不是找空", ["更适合在这里找空", "说明上涨快结束", "说明只能旁观"], "开放向上缺口本身就是强多头背景。"]
+];
+
+const introQuizSpecs = [
+  ["intro_terms", "AIL 的含义", "始终做多", ["始终做空", "突破买入", "回调结束"], "AIL 是 Always In Long，表示如果必须立刻持仓，更合理的是站在多头一侧。"],
+  ["intro_terms", "AIS 的含义", "始终做空", ["始终做多", "高频交易", "量测目标"], "AIS 是 Always In Short，表示市场主导方向偏空。"],
+  ["intro_terms", "BO 这个缩写", "突破", ["回调", "窄幅区间", "主要反转"], "BO 是 Breakout。"],
+  ["intro_terms", "PB 这个缩写", "回调或回踩", ["突破后的跟随", "止损距离", "整数关口"], "PB 是 Pullback。"],
+  ["intro_terms", "TTR 这个缩写", "窄幅交易区间", ["趋势通道", "时间周期", "成交量放大"], "TTR 是 Tight Trading Range。"],
+  ["intro_terms", "MM 这个缩写", "量测目标或预期波动幅度", ["移动平均线", "市场做市商", "微型缺口"], "MM 是 Measured Move。"],
+  ["intro_terms", "MAG 这个缩写", "移动平均线缺口K线", ["主要趋势反转", "均线回踩买点", "大实体趋势线"], "MAG 是 Moving Average Gap Bar。"],
+  ["intro_terms", "TBTL 的含义", "十根K线、两段式调整", ["三推反转结构", "二十根K线横盘", "双顶双底的简称"], "TBTL 是 Ten Bars, Two Legs correction。"],
+  ["intro_terms", "OOD 这个缩写", "当日开盘价", ["开盘缺口方向", "外包线定义", "开盘后的第一根趋势K线"], "OOD 是 Open Of Day。"],
+  ["intro_terms", "MTR 这个缩写", "主要趋势反转", ["量测回撤区间", "移动平均回调", "市场交易区间"], "MTR 是 Major Trend Reversal。"],
+  ["intro_terms", "BLSHS 的含义", "低买高卖、日内刷单交易", ["突破后一直持仓不动", "高频交易算法", "只做基本面配置"], "BLSHS 是 Buy Low, Sell High, Scalp。"],
+
+  ["intro_chart_basics", "蜡烛图最核心的优势", "一根K线可同时呈现开高低收", ["只能显示收盘价", "只能用于日线图", "不能看多空强弱"], "蜡烛图的信息密度高，能快速看到该周期的开高低收。"],
+  ["intro_chart_basics", "趋势K线的简易判别标准", "实体通常至少占整根K线的一半", ["只要颜色鲜明就算趋势K线", "只要没有影线才算趋势K线", "只要振幅够大就一定算"], "Brooks 的简易标准是实体够大、影线相对短。"],
+  ["intro_chart_basics", "交易区间K线更常见的特征", "实体小、影线长、表现为平衡", ["实体大、收盘总在极端", "必须开盘等于收盘", "只会出现在高周期"], "十字星和小实体K线本质上都在表达平衡与犹豫。"],
+  ["intro_chart_basics", "内包线的定义", "高点不高于前高，低点不低于前低", ["高低点都突破前一根", "只有收盘价低于前收盘", "实体必须比前一根更大"], "内包线是整根K线被前一根包住。"],
+  ["intro_chart_basics", "外包线的定义", "高点不低于前高且低点不高于前低", ["高点和低点都缩在前一根内部", "只有实体完全不重叠", "只要收盘创新高即可"], "外包线是当前K线把前一根包住。"],
+  ["intro_chart_basics", "高点或低点与前一根持平时", "仍可按内包线或外包线规则判定", ["自动失去形态意义", "只能算趋势K线", "只能在周线图使用"], "课程里持平也视为满足 inside/outside 的边界条件。"],
+  ["intro_chart_basics", "课程里常用的图表时间周期", "5分钟、日线、周线、月线", ["只讨论1分钟图和5分钟图", "只讨论日线和月线", "只讨论tick图和范围图"], "这些周期都能用同一套价格行为逻辑解读。"],
+  ["intro_chart_basics", "线形图更受部分机构与长线交易者青睐的原因", "它只连收盘价，能过滤盘中噪音", ["它比蜡烛图包含更多价格信息", "它只能用于新闻交易", "它会自动给出买卖点"], "线形图牺牲细节，换来更平滑的宏观结构。"],
+  ["intro_chart_basics", "牛市趋势K线更常见的收盘位置", "开盘近低点、收盘近高点", ["开盘和收盘都在中间", "收盘总在最低点附近", "必须上下影线都很长"], "强多头趋势K线通常表现为从一端推到另一端。"],
+  ["intro_chart_basics", "课程里的十字星更合理的理解", "凡是小实体、表达平衡的K线都可归入这一类", ["只有开盘价和收盘价完全相等才算", "只有长上影线才算", "必须是大阴大阳之后才算"], "Brooks 不执着于完美十字星的教科书定义。"],
+  ["intro_chart_basics", "关于成交量K线宽度类图表，下列哪项更合理", "它不是主流工具，真正稳定用好的人很少", ["它优于蜡烛图和线形图", "它是课程的核心推荐图表", "它能自动消除假突破"], "课程里提到过这类图表，但并不把它当主流武器。"],
+
+  ["intro_market_states", "市场状态的核心二分法", "任何时刻只有趋势或交易区间两种状态", ["市场永远同时兼具趋势和区间", "市场主要分为四种状态", "只有强趋势和弱趋势两种"], "这是 Brooks 的根本简化方式。"],
+  ["intro_market_states", "牛市趋势更合理的结构描述", "不断出现更高的高点和更高的低点", ["不断出现更低的高点和更低的低点", "只要连续阳线就是牛市", "只要高点不创新高就是牛市"], "牛市的关键是 HH 与 HL。"],
+  ["intro_market_states", "趋势最强的阶段通常是", "突破阶段", ["通道后半段", "交易区间中央", "无论哪个阶段都一样"], "突破阶段通常伴随更强的单边动能。"],
+  ["intro_market_states", "趋势通道后续最常见的演变", "逐渐转成交易区间", ["直接进入反向强趋势", "永远保持同样斜率", "只会变成缺口"], "通道往往先减速、变宽，最后更像区间。"],
+  ["intro_market_states", "交易区间的核心特征", "价格横向波动，缺少清晰趋势推进", ["每根K线都很大", "一定伴随缺口", "只要出现十字星就是区间"], "区间本质是市场处在相对平衡中。"],
+  ["intro_market_states", "市场进入交易区间后", "通常进入为下一次突破蓄势的阶段", ["代表行情已经结束", "一定立刻向上突破", "一定立刻向下突破"], "区间既是平衡，也是后续突破的蓄力区。"],
+  ["intro_market_states", "关于交易区间突破，下列哪项更合理", "大多数试图离开区间的突破都会失败", ["绝大多数突破都会直接走成趋势", "只要突破一次就不会回头", "突破失败只发生在高周期"], "课程里强调大约 80% 的区间突破会失败。"],
+  ["intro_market_states", "牛市通道在 Brooks 语境里也常被看作", "熊市旗形", ["主要趋势反转", "岛形顶部", "量测缺口"], "因为牛市通道常常是熊市中的缓慢反弹。"],
+  ["intro_market_states", "熊市趋势更合理的结构描述", "不断出现更低的高点和更低的低点", ["不断出现更高的高点和更高的低点", "只要连续阴线就是熊市", "只要跌破均线就是熊市"], "熊市的关键是 LH 与 LL。"],
+  ["intro_market_states", "交易者在交易区间中的重要任务之一", "预判未来更可能向哪边成功突破", ["忽略区间边界，只在中间频繁追单", "默认任何突破都必然成功", "只统计阳线和阴线数量"], "区间不是无事可做，而是要评估力量在向哪边累积。"],
+  ["intro_market_states", "当新的信息让旧区间不再被接受时", "市场更可能走出成功突破并转入趋势", ["市场只会继续在原区间横盘", "市场一定立刻反向", "市场会停止寻找公平价格"], "成功突破意味着旧平衡被抛弃。"],
+
+  ["intro_analysis_types", "技术分析最核心的依据", "价格图表与价格行为", ["新闻标题与专家解读", "财报文本和宏观报告", "成交量柱状图本身"], "技术分析首先研究价格本身。"],
+  ["intro_analysis_types", "基本面分析更主要依赖", "经济与公司信息，而非价格图表", ["单根K线形态", "内包线和外包线", "均线缺口K线"], "基本面分析的出发点不是图表结构。"],
+  ["intro_analysis_types", "关于技术分析与基本面分析的关系", "不少基本面交易者也会参考图表", ["两者绝对不能混用", "技术分析只能个人用", "基本面分析从不看价格位置"], "现实里很多机构会把两者结合。"],
+  ["intro_analysis_types", "剥头皮交易更符合哪项描述", "追求快速获利，通常 1 到 5 根K线内离场", ["持有数月不动", "必须忍受深回调", "只在周线图操作"], "剥头皮强调快进快出。"],
+  ["intro_analysis_types", "波段交易更符合哪项描述", "只要行情向有利方向发展，就愿意继续持有", ["绝不允许任何回调", "只做一根K线", "只靠新闻入场"], "波段交易者愿意承受趋势中的回调。"],
+  ["intro_analysis_types", "投资者在课程语境里更接近", "超长期的大周期持仓者", ["所有日内刷单者", "只做 5 分钟图的人", "只做 countertrend 的人"], "当持仓跨越数十根周线或月线时，更像投资者。"],
+  ["intro_analysis_types", "波段交易的离场规则", "没有固定K线数量上限，可随走势管理", ["必须 5 根K线内离场", "只能在出现十字星时离场", "必须持有 40 根K线"], "波段交易靠交易管理，而不是固定根数。"],
+  ["intro_analysis_types", "选择交易风格时更合理的原则", "选择与自己性格和目标匹配的方式", ["所有人都该做超短线", "所有人都该做长期投资", "只看别人赚钱的方法"], "课程一直强调一致性与适配性。"],
+  ["intro_analysis_types", "技术分析在课程里的重点，还包括", "判断市场的涨跌状态、动量和力度", ["只背诵形态名称", "只记录新闻发布时间", "只关注市场深度数据"], "技术分析不是认形态比赛，而是读结构和力量。"],
+  ["intro_analysis_types", "不少基本面交易者也会参考图表，尤其是在", "价格回调到支撑位或关键位置时", ["任何时候都完全不看价格位置", "只在电视专家发言后", "只在成交量极大时"], "现实里的机构并不会把图表完全排除在外。"],
+  ["intro_analysis_types", "在大周期上也追求很快兑现利润的交易者", "仍可被视作快钱或剥头皮风格交易者", ["自动归类为投资者", "自动归类为套利程序", "只能归类为新闻交易者"], "课程里对交易风格的划分更看持有与管理方式。"],
+
+  ["intro_trade_forms", "跳动点的含义", "价格最小的涨跌单位", ["一根K线的总波动", "单笔交易的手续费", "一个完整波段"], "tick 是最细的价格单位。"],
+  ["intro_trade_forms", "点数更合理的理解", "由多个跳动点构成，具体换算随品种而变", ["固定等于 10 个跳动点", "固定等于 1 手", "等于一个交易日的波动"], "不同市场的 point 与 tick 换算并不相同。"],
+  ["intro_trade_forms", "手数更接近哪项含义", "交易数量单位，如几份合约或几份股票", ["价格的最小变动单位", "一根趋势K线", "成交量背离"], "手数描述的是你交易了多少。"],
+  ["intro_trade_forms", "整数关口的实战意义", "它常成为市场关注的重要参考价位", ["它只在外汇市场有效", "它和支撑阻力无关", "它只对长线投资者有用"], "整数位常常天然具备心理阻力或支撑意义。"],
+  ["intro_trade_forms", "ABC 回调更符合哪项描述", "三段式调整，可以夹杂横盘，不必全是下跌", ["必须每一段都创出新低", "只能出现在熊市", "必须伴随缺口"], "Brooks 把回调理解得很灵活，横盘同样可以构成调整。"],
+  ["intro_trade_forms", "双底在课程里通常更接近", "高2做多形态", ["低2做空形态", "量测缺口", "衰竭缺口"], "双底常常就是 H2 买入。"],
+  ["intro_trade_forms", "双顶在课程里通常更接近", "低2做空形态", ["高2做多形态", "趋势恢复买点", "止损信号"], "双顶常常就是 L2 卖出。"],
+  ["intro_trade_forms", "MTR 的含义", "主要趋势反转，代表趋势发生根本变化", ["移动平均线回调", "微型交易区间", "市场测试阻力"], "MTR 比普通小反转更大、更结构化。"],
+  ["intro_trade_forms", "旗形更合理的理解", "趋势中的调整，结束后通常延续原趋势", ["趋势结束后的固定顶部", "只会出现在交易区间里", "只是一种成交量现象"], "牛旗或熊旗本质都是趋势中继整理。"],
+  ["intro_trade_forms", "头肩底里最重要的做多触发之一", "向上突破颈线", ["左肩形成时立刻满仓", "头部最低点出现时抄底", "右肩任何阳线都追价"], "头肩底是否有效，关键之一就是颈线能否被突破。"],
+  ["intro_trade_forms", "高1、高2、低1、低2 这些命名的核心价值", "帮助交易者寻找顺势入场时机", ["用来替代止损规则", "用来预测新闻内容", "用来确定成交量大小"], "名称不是目的，找到顺势交易位置才是重点。"],
+
+  ["intro_execution", "信号K线的作用", "给出交易者考虑入场的依据", ["用于统计成交量", "用于决定新闻方向", "用于判断交易品种"], "信号K线是 setup 的触发参考。"],
+  ["intro_execution", "突破信号K线高点做多时，更常见的触发方式", "在信号K线上方买入", ["等跌破信号K线低点后买入", "只在收盘后追空", "取消止损"], "最常见的做法是等价格突破信号K线高点。"],
+  ["intro_execution", "课程更推荐的交易方向", "顺势交易", ["逆势交易", "新闻交易", "指标背离交易"], "顺势交易通常胜率更高、压力更小。"],
+  ["intro_execution", "逆势交易的基本特点", "成功率通常更低，需要更强理由", ["一定比顺势安全", "只要止损小就总能做", "只适用于机构"], "逆势必须提高门槛。"],
+  ["intro_execution", "趋势背景的定义", "当前K线左侧已经发生的价格行为", ["未来新闻事件", "下一个周期的预测", "成交量指标的读数"], "背景是评估当前信号是否有意义的关键。"],
+  ["intro_execution", "Always In 的含义", "如果必须立刻持仓，哪一边更合理", ["市场永远不会反转", "只在开盘时才有效", "只代表大资金的方向"], "Always In 反映当前主导方向。"],
+  ["intro_execution", "在明确牛市趋势里，Always In 更常是", "Always In Long", ["Always In Short", "Always In Neutral", "无法判断"], "牛势中若必须马上持仓，通常更该站在买方。"],
+  ["intro_execution", "顺势做多的止损更合理地放在", "支撑位或信号K线低点下方", ["信号K线高点上方", "区间中间", "任意整数关口上方"], "如果 setup 有效，价格就不该轻易跌破关键支撑。"],
+  ["intro_execution", "入场K线更合理的理解", "真正触发你成交的那根K线", ["任何长影线K线", "图表上最漂亮的那根K线", "与信号K线完全无关"], "信号K线给出理由，入场K线完成触发。"],
+  ["intro_execution", "顺势做空时，止损更常放在", "阻力位或信号K线高点上方", ["信号K线低点下方", "最近低点更下方", "任意整数关口下方"], "如果空头 setup 有效，价格不该再站上关键阻力。"],
+  ["intro_execution", "市场从明显趋势逐步转向交易区间时", "Always In 的判断也可能随之切换", ["Always In 会永远保持原方向", "背景会变得不重要", "顺势和逆势的区别会消失"], "Always In 是动态判断，不是永久标签。"],
+
+  ["intro_participants", "当前主流市场的核心现状", "绝大多数交易由电脑程序执行", ["绝大多数交易由散户电话下单完成", "市场主要靠新闻主持人推动", "只有开盘时才有程序交易"], "算法和自动化交易是现代市场常态。"],
+  ["intro_participants", "算法更接近哪项含义", "决定买卖与管理仓位的软件逻辑", ["机构内部的新闻群", "交易员的主观直觉", "手动画趋势线的方法"], "算法本质是程序化的交易规则。"],
+  ["intro_participants", "课程里提到的机构主体包括", "银行、对冲基金、高频公司、养老金与共同基金", ["只有银行和券商", "只有做市商和媒体", "只有个人短线客"], "这些大型参与者共同塑造主要市场结构。"],
+  ["intro_participants", "单次交易手数很大的个人账户", "在影响力上可能接近机构", ["永远不会被视作机构范畴", "一定属于高频交易", "只会影响成交量不会影响价格"], "规模足够大时，大个人账户的作用接近机构。"],
+  ["intro_participants", "套利交易的核心动作", "卖出相对高估的市场并买入相对低估的市场", ["专门追涨最强品种", "只在新闻后抢反弹", "只做双顶双底"], "套利在价差极小的偏离中寻找利润。"],
+  ["intro_participants", "套利交易对市场的作用", "让相关市场价格更接近合理价值并保持联动", ["让图表完全失效", "让市场只剩单边趋势", "让个人交易者无法成交"], "套利会不断修复异常价差。"],
+  ["intro_participants", "高频交易对个人交易者更合理的理解", "它贡献大量成交量，但不是你亏损的核心原因", ["它会决定你每一笔交易必亏", "它让所有图表都无效", "它只存在于股票而不存在期货"], "课程明确提醒不要把亏损归咎于 HFT。"],
+  ["intro_participants", "关于幌骗和抢先交易，下列哪项更正确", "它们属于违法行为，但不该成为你亏损的借口", ["它们是所有机构的标准合法策略", "它们意味着散户无法学习交易", "它们比价格行为更重要"], "重点仍然是学会读懂价格行为。"],
+  ["intro_participants", "课程里对个人交易者影响最大的提醒是", "个人交易者本身无法主导市场价格", ["个人交易者能轻易推动主要市场方向", "只要下单够快就能压过机构", "市场主要围绕个人交易者成交"], "先接受自己是跟随者，而不是推动者。"],
+  ["intro_participants", "看到图表上的强买盘足迹时，更合理的思路是", "学习跟随机构留下的价格行为", ["试图和所有机构对着干", "只依赖新闻解释", "完全忽略图表"], "个人交易者能做的是搭便车，而不是主导市场。"],
+  ["intro_participants", "关于套利交易的成交量占比，课程给出的量级是", "可能占到每日总成交量的大约三成", ["几乎可以忽略不计", "固定只有 5%", "一定超过 90%"], "课程里明确提到过这一大致量级。"],
+
+  ["intro_market_logic", "课程对图表的核心看法", "图表是观察市场与价格行为的窗口", ["图表只是装饰", "图表只适合讲故事", "图表比交易管理更重要"], "图表的价值在于帮助交易者读懂多空博弈。"],
+  ["intro_market_logic", "图表最重要的用途之一", "直观揭示当前与近期趋势", ["预测全部新闻内容", "替代止损管理", "保证每笔交易都盈利"], "图表首先服务于趋势识别。"],
+  ["intro_market_logic", "关于图表类型的选择", "不存在最好图表，只有更适合自己的图表", ["蜡烛图永远优于其他图", "线形图一定错误", "交易量图表最神奇"], "课程强调一致性而不是追求神奇工具。"],
+  ["intro_market_logic", "市场存在的核心功能", "最大化交易活动并提供流动性", ["帮助散户战胜机构", "制造随机波动", "让价格停在固定位置"], "市场的生命力来自促成交易。"],
+  ["intro_market_logic", "公平价格更合理的理解", "当下最能让买卖双方成交的动态价格", ["永远固定不变的理论价值", "分析师给出的目标价", "上一根K线的收盘价"], "公平价格会随着信息与情绪持续变化。"],
+  ["intro_market_logic", "价格上涨的一个根本目的", "测试卖方在更高价位出售的意愿", ["证明新闻一定利好", "自动确认牛市永远持续", "让成交量永久萎缩"], "上涨和下跌都在测试另一侧愿意成交的程度。"],
+  ["intro_market_logic", "价格下跌的一个根本目的", "测试买方在更低价位承接的意愿", ["说明市场已经坏掉", "说明必然形成熊市", "只为触发止损"], "价格向下同样是在寻找新的平衡。"],
+  ["intro_market_logic", "强势突破离开旧区间时，更合理的理解", "市场正在抛弃旧的公平价格区并寻找新平衡", ["市场只是在制造噪音", "市场一定会立刻回原区间", "市场不再需要流动性"], "成功突破意味着原平衡被打破。"],
+  ["intro_market_logic", "课程对市场信息的核心看法", "所有市场信息最终都会反映在价格中", ["只有新闻才反映真实信息", "只有成交量才反映真实信息", "价格只是结果，无法分析"], "交易者不需要比价格更聪明，先把价格读明白。"],
+  ["intro_market_logic", "把复杂图表世界进一步简化后，最核心的状态转换是", "趋势与震荡之间的相互转化", ["缺口与新闻之间的转化", "均线与指标之间的转化", "日线与周线之间的转化"], "这套体系的力量就在于高度简化。"],
+  ["intro_market_logic", "关于寻找神奇图表的态度，更合理的是", "图表应该服务于读懂价格，而不是被当成圣杯", ["不断换图是盈利核心", "图表类型决定一切", "不用图表也能完成技术分析"], "工具观必须为交易服务，而不是喧宾夺主。"],
+
+  ["intro_volume_news_risk", "价格下跌而成交量也萎缩时，更值得注意的是", "市场可能需要反弹或横盘来重新吸引成交", ["市场一定会继续暴跌", "成交量已经彻底无效", "只说明新闻面变好了"], "成交量萎缩意味着当前价位的交易意愿在下降。"],
+  ["intro_volume_news_risk", "关于巨大K线与成交量，下列哪项更合理", "最大的价格K线通常已经隐含了巨大的成交量", ["只有看量柱才知道是否重要", "大K线和成交量毫无关系", "大K线只出现在外汇"], "Brooks 强调价格行为本身常已足够说明问题。"],
+  ["intro_volume_news_risk", "看到清晰的熊市价格行为信号，但成交量并不大时", "不应把量不大当成放弃交易的借口", ["必须立刻放弃做空", "说明信号一定无效", "只能等待新闻确认"], "价格行为优先级高于你对量能的想象。"],
+  ["intro_volume_news_risk", "牛市突破伴随巨大成交量时", "不能只因巨量就无脑追高", ["说明一定继续单边上涨", "说明价格行为不再重要", "说明必须取消止损"], "巨量也可能对应假突破。"],
+  ["intro_volume_news_risk", "课程对新闻的核心原则", "真正重要的是市场对新闻的反应", ["真正重要的是专家事前预测", "真正重要的是新闻标题字面意思", "真正重要的是社交媒体情绪"], "价格反应永远比新闻文本更有交易价值。"],
+  ["intro_volume_news_risk", "坏消息公布后价格反而上涨，更合理的解读是", "市场原本预期更坏，因此实际结果相对偏多", ["消息其实一定是利好", "这是成交量造假", "说明图表已经失效"], "市场交易的是预期差。"],
+  ["intro_volume_news_risk", "风险偏好市场更常见的行为", "资金偏向高波动、高弹性的品种", ["资金全面转去防御股", "资金只会买低估值股票", "资金停止追逐动量"], "risk-on 的核心是愿意承受更多波动来换取收益。"],
+  ["intro_volume_news_risk", "害怕错过的交易者更接近哪种思维", "只担心踏空，看到涨势就愿意追价", ["只会在价值严重低估时买入", "只会在双底时买入", "只根据成交量背离行动"], "FOMO 的本质是怕错过，而不是看重估值。"],
+  ["intro_volume_news_risk", "外汇市场里很多交易者不依赖真实成交量，一个重要原因是", "它没有统一、完整的全球成交量数据", ["它的价格行为完全随机", "它只适合看新闻", "它没有趋势和区间"], "这正是课程拿来反证“量不是必须”的例子。"],
+  ["intro_volume_news_risk", "如果公司财报超预期，但价格却下跌，对交易者而言更合理的解读是", "这就是偏空反应，应尊重价格", ["这一定是数据造假", "这说明必须继续做多", "这说明图表已经没用"], "价格跌就是市场在用钱投票。"],
+  ["intro_volume_news_risk", "风险规避环境中，资金更可能流向", "低波动、防御性的品种", ["更高波动的成长股", "只要涨得快的任何品种", "所有整数关口附近的股票"], "risk-off 的核心是降低波动与回撤暴露。"],
+
+  ["intro_mindset", "新手最先该放下的错误信念", "不存在秘密或完美的交易系统", ["存在只有少数人知道的万能 setup", "只靠几个形态就能长期稳赢", "只要指标多就会更精准"], "课程反复强调交易没有捷径。"],
+  ["intro_mindset", "大多数买卖信号的盈利概率更接近", "40% 到 60% 之间，而不是接近 100%", ["90% 到 100%", "20% 以下", "只要顺势就一定 80% 以上"], "接受不确定性是入门的基本功。"],
+  ["intro_mindset", "作为起步图表，更推荐的新手时间框架", "5分钟图", ["1分钟图", "每秒图", "只能从月线开始"], "5 分钟图在节奏和信息量之间更平衡。"],
+  ["intro_mindset", "为什么新手不宜从 1 分钟图起步", "决策过多、节奏太快，更容易犯错", ["因为 1 分钟图没有价格行为", "因为 1 分钟图没有趋势", "因为 1 分钟图不能设止损"], "过小周期会放大压力和执行错误。"],
+  ["intro_mindset", "选择时间框架更合理的原则", "选你能持续盈利的最小时间框架", ["越小越好", "越大越安全", "必须和别人完全一样"], "重点是与你的执行能力匹配。"],
+  ["intro_mindset", "TBTL 原则最常表达的预期", "反转后常会出现约十根K线和两段走势", ["只要反转就一定形成主要趋势", "每次都只走一根K线", "一定需要 20 根K线"], "它是常见预期，不是机械保证。"],
+  ["intro_mindset", "为了保持客观，新手仓位更合理的做法", "小到让你不在乎输赢，甚至只用这个规模的 25%", ["先重仓逼自己成长", "只在看对时加大 10 倍", "亏损后立刻翻倍补回"], "情绪管理的起点是把仓位降到足够小。"],
+  ["intro_mindset", "优秀交易者更重要的品质", "自律、客观和耐心", ["冲动、激进和频繁试错", "依赖别人喊单", "只看风险收益比不看概率"], "课程对交易者人格要求非常明确。"],
+  ["intro_mindset", "关于最佳入场时间的课程观点，更合理的是", "不存在唯一完美入场点，机会会不断出现", ["只有第一时间进场才可能赚钱", "错过第一次就说明当天结束了", "只有看到完美单根K线才能做"], "不要把交易理解成抢唯一门票。"],
+  ["intro_mindset", "课程对“管理大于选择入场点”的强调，核心在于", "交易管理往往比找最漂亮 setup 更重要", ["找到完美 setup 后就不需要管理", "只要盈亏比大就够了", "指标比管理更重要"], "好管理能显著提高普通交易的结果。"],
+  ["intro_mindset", "对大多数交易者而言，更现实的主攻方向通常是", "先以波段交易为主，而不是把超短线当主战场", ["先在 1 分钟图高速刷单", "先用重仓提高感觉", "先专做所有逆势交易"], "课程明确提醒大多数人不应以 scalping 为主。"]
+];
+
+const introScenarioSpecs = [
+  ["intro_terms", "你复盘时写下“如果必须立刻持仓，我只愿站在买方一侧”", "把它记作 AIL，而不是 AIS", ["把它记作 AIS", "把它记作 MM", "把它记作 TTR"], "AIL 代表 Always In Long。"],
+  ["intro_terms", "价格刚越过关键阻力并被快速接受，交易笔记需要标记这类动作", "把它理解为 BO，而不是普通 PB", ["把它理解为 PB", "把它理解为 TBTL", "把它理解为 MTR"], "越过关键位并被接受，就是突破。"],
+  ["intro_terms", "一波上涨后市场走出两段式整理，你在做术语归类", "优先把它视作 PB 或 TBTL 类型调整", ["直接定义成主要趋势反转", "直接定义成 HFT 行为", "直接定义成测量缺口"], "两腿调整更像回调，而不是自动大反转。"],
+  ["intro_terms", "复盘中你记录“价格一直守在当日开盘价上方，市场在围绕这个价位做判断”", "这里提到的关键参照就是 OOD", ["这里提到的是 MM", "这里提到的是 HFT", "这里提到的是 MTR"], "OOD 就是当日开盘价。"],
+
+  ["intro_chart_basics", "一根K线实体占了大半，收盘靠近最高点，上下影线都很短", "把它优先当作趋势K线", ["把它优先当作交易区间K线", "把它只当作成交量信号", "把它当作一定反转"], "大实体、短影线说明单边力量更强。"],
+  ["intro_chart_basics", "新K线的高低点都完全落在前一根K线范围内", "把它判定为内包线", ["把它判定为外包线", "把它判定为缺口", "把它判定为主要反转"], "当前整根K线被前一根包住，就是 inside bar。"],
+  ["intro_chart_basics", "你在 5 分钟图上看得很乱，但切到日线后结构突然清楚许多", "接受不同周期都能分析，并优先回到更适合自己的周期", ["只在更小周期继续加噪音", "认为高周期和低周期毫无关系", "因此放弃图表"], "不同时间框架共享同一套价格行为逻辑。"],
+  ["intro_chart_basics", "某根K线实体很小，但上下影线都明显，开收位置接近中间", "更该把它当作交易区间K线或十字星，而不是趋势K线", ["更该把它当作最强趋势K线", "更该把它当作自动反转信号", "更该只根据颜色交易"], "小实体和长影线说明的是平衡，不是急迫。"],
+
+  ["intro_market_states", "强势上涨后行情开始缓慢回落，回调彼此重叠增多，但还没有明显反转", "先把它看成趋势进入通道阶段，而不是直接判死刑", ["立刻定义成主跌趋势", "认定市场只能继续加速上涨", "忽略阶段变化"], "趋势往往先从突破转为通道，再逐渐变成区间。"],
+  ["intro_market_states", "市场已经横盘很久，期间多次向上或向下刺出后又回到区间里", "更该预期区间环境和失败突破", ["更该每次突破都追单", "更该默认下一次一定成功", "更该不看上下文"], "横盘里失败突破本来就是高频现象。"],
+  ["intro_market_states", "牛市通道后半段回调变深、阳线跟随变差", "开始防它向交易区间演变", ["认为趋势一定更安全", "认为只能继续追高", "认为通道永远不会变宽"], "通道后期最常见的结果是减速并横盘。"],
+  ["intro_market_states", "价格在区间里来回测试上下边界，多次离开又被拉回", "这说明市场还在确认公平价格区边界，而不是已经稳定走出趋势", ["这说明任何下一次突破都应立刻重仓追随", "这说明区间本身没有交易意义", "这说明只需看新闻判断方向"], "失败突破越多，越说明区间边界正在被确认。"],
+
+  ["intro_analysis_types", "你只想抓 1 到 5 根K线的小利润，而且完全不想忍受回调", "这更像剥头皮交易", ["这更像长期投资", "这更像基本面配置", "这更像月线波段"], "快进快出、不容忍回撤，是 scalping 的典型特点。"],
+  ["intro_analysis_types", "某机构主要研究财报、利率和宏观数据，图表只是辅助", "这更接近基本面分析", ["这更接近纯技术分析", "这更接近量测目标", "这更接近 always in"], "基本面分析的核心是经济与公司信息。"],
+  ["intro_analysis_types", "你愿意拿住仓位，只要趋势仍朝有利方向发展就继续持有", "这更像波段交易", ["这更像新闻套利", "这更像剥头皮", "这更像高频交易"], "能承受回调并持有多根K线，是 swing 的特征。"],
+  ["intro_analysis_types", "你在周线图里已经持有了三十多根K线，计划继续拿下去", "这时更接近投资者语境，而不是日内刷单", ["这时更接近剥头皮交易", "这时更接近一根K线交易", "这时更接近高频套利"], "持仓尺度已经明显进入超长期范畴。"],
+
+  ["intro_trade_forms", "牛市回调走成三段，两次下探后又出现恢复上涨的信号", "优先把它当作 ABC 回调里的顺势机会", ["优先把它当作必然反转", "优先把它当作高频噪音", "优先把它当作无意义横盘"], "ABC 回调并不要求每一腿都长得一样。"],
+  ["intro_trade_forms", "价格在 4200 一线反复停顿、转向，市场明显在意这个价位", "把它视作重要整数关口", ["把它视作随机数字", "把它视作成交量指标", "把它视作新闻标题"], "整数位天然容易成为支撑阻力。"],
+  ["intro_trade_forms", "熊市反弹后再次走弱，卖方准备第二次顺势卖出", "把它优先理解为 L2 机会", ["把它理解为 H2 买点", "把它理解为 MTR 已完成", "把它理解为无风险套利"], "第二次恢复下跌就是 L2 的核心。"],
+  ["intro_trade_forms", "一轮下跌后形成头肩底，右肩完成后价格又强势上破颈线", "更应把它理解为典型牛市反转做多信号", ["更应把它理解为继续顺势做空", "更应把它理解为只是随机震荡", "更应把它理解为量测缺口"], "头肩底真正有意义的时刻，往往就是颈线被有效突破。"],
+
+  ["intro_execution", "牛市旗形末端出现看涨信号棒，你准备顺势做多", "更合理的是等其高点被突破，并把止损放在低点下方", ["更合理的是跌破其低点去买", "更合理的是取消止损", "更合理的是只因是阳线就市价重仓"], "信号棒要和触发方式、止损一起考虑。"],
+  ["intro_execution", "强熊趋势里只冒出一根普通牛反转棒，你想立刻抄底", "先尊重背景，不要把弱反向信号当高质量逆势机会", ["立刻把它当主要趋势反转", "只看颜色不看左侧背景", "因为止损小就重仓做多"], "背景始终先于单根K线。"],
+  ["intro_execution", "如果你现在必须马上持仓，而市场仍表现为连续强多头控制", "更应按 Always In Long 来理解当前环境", ["更应按 Always In Short 来理解", "说明最好不设止损", "说明背景已经不重要"], "Always In 问的是现在立刻站哪边更合理。"],
+  ["intro_execution", "你准备跌破看跌信号棒低点做空，这笔单子的风险控制应该怎么想", "止损通常放在该信号棒高点或阻力上方", ["止损放在信号棒低点下方", "完全不设止损", "只放在当天开盘价"], "做空 setup 若成立，价格不该重新站上关键高点。"],
+
+  ["intro_participants", "两个高度相关的市场短暂出现小幅价差，一个偏贵一个偏便宜", "更合理的是卖贵买便宜做套利", ["更合理的是只追最强的那个", "更合理的是等待新闻解释", "更合理的是忽略价差"], "套利就是利用相关市场之间的微小错位。"],
+  ["intro_participants", "你连续亏损后，把原因全部归咎于 HFT 和幌骗", "先回到自己的读图和交易管理，而不是把责任外包", ["继续只研究阴谋论", "因此放弃价格行为", "因此取消止损"], "课程对个人交易者的提醒是先把自己做好。"],
+  ["intro_participants", "一个个人账户单次就能下出上百手，足以影响局部流动性", "把它看作影响力接近机构的大账户", ["仍然完全等同普通散户", "必然属于违法交易", "一定就是抢先交易"], "极大规模的个人账户在实务上可能接近机构。"],
+  ["intro_participants", "你之所以能在某个价格成交，背后更合理的理解是", "一定有机构或大资金愿意在同一价格与你做反向交易", ["说明你已经在主导市场", "说明没有机构参与这笔交易", "说明市场在刻意针对你"], "个人交易者能成交，本身就说明对手方足够充足。"],
+
+  ["intro_market_logic", "价格在一段很窄的区间里反复来回成交，双方都愿意不断成交", "这更像市场暂时找到了公平价格区", ["这更像市场已经没有流动性", "这更像只剩单边趋势", "这更像图表完全失效"], "窄区间本身就是短暂平衡的体现。"],
+  ["intro_market_logic", "强突破离开旧区间后还出现了明显跟随柱，市场一路接受新价格", "这说明市场正在寻找新的公平价格区", ["这说明一定马上回旧区间", "这说明走势纯属随机", "这说明不必再看图"], "成功突破的本质是重估。"],
+  ["intro_market_logic", "你不断更换图表样式，希望找到一个能自动赚钱的神奇图表", "更合理的是选一个适合自己的图表并持续使用", ["继续频繁换图直到找到圣杯", "只在别人推荐时切图", "放弃所有图表"], "没有最好的图表，只有更适合你的图表。"],
+  ["intro_market_logic", "价格涨到过高位置后买方明显消失，卖盘开始涌出", "更合理的结果是价格回落去重新测试新的平衡", ["更合理的结果是价格永远停在高位", "更合理的结果是市场不再成交", "更合理的结果是价格一定继续暴涨"], "这正是市场不断搜索公平价格的过程。"],
+
+  ["intro_volume_news_risk", "坏消息公布后价格却一路上涨，且买盘跟随良好", "按价格反应理解它偏多，而不是死盯新闻文字", ["把它当成必须做空", "把它当成图表失效", "只等专家解释"], "市场交易的是预期差，而不是字面好坏。"],
+  ["intro_volume_news_risk", "图表出现清晰熊市突破和跟随，但量柱并不算大", "仍应优先尊重价格行为，而不是因为量小放弃信号", ["因此一定不能做空", "因此只需等待更大成交量", "因此应该反向做多"], "价格行为足以提供高质量信息。"],
+  ["intro_volume_news_risk", "市场快速暴涨，你强烈害怕错过机会，满脑子只想追进去", "先意识到这是 FOMO 或风险偏好情绪在驱动你", ["说明你已经发现了无风险机会", "说明基本面一定便宜", "说明必须重仓"], "识别情绪本身就是交易的一部分。"],
+  ["intro_volume_news_risk", "牛市突破伴随巨量后，价格却没有继续涨，而是横盘后下跌", "更该把这看作成交量也可能误导你的例子，而不是自动追多理由", ["更该把它视作必须继续追高", "更该把它视作量越大越安全", "更该把它视作图表没意义"], "课程里明确用这类例子提醒新手别迷信量。"],
+
+  ["intro_mindset", "你刚开始实盘，1 分钟图让你每分钟都在焦虑决策", "切回 5 分钟或更可控的周期会更合理", ["继续缩到更小周期练反应", "把止损取消来减少噪音", "只凭感觉交易"], "先找到能保持客观的节奏，比追求快更重要。"],
+  ["intro_mindset", "你每次下单都很害怕亏钱，结果看不清图表也执行变形", "先把仓位降到几乎不在乎输赢的级别", ["为了克服恐惧先加大仓位", "继续硬扛情绪", "只改指标不改仓位"], "仓位太大时，情绪会直接扭曲判断。"],
+  ["intro_mindset", "市场处在交易区间里，让你反复感到困惑、失望、跟随性很差", "这更该让你预期失败突破并采用低买高卖思路", ["这更该让你每次突破都追单", "这更该让你停止看背景", "这更该让你只按情绪下单"], "课程把情绪视为雷达，而不是指挥棒。"],
+  ["intro_mindset", "你看到一个楔形顶部，盈亏比看着很好，但背景是八根连续强阳线、几乎没回调", "更合理的是警惕这是低概率交易，不要只因止损小就硬做", ["更合理的是立刻把它当高概率反转重仓做空", "更合理的是完全忽略背景", "更合理的是只看盈亏比不看概率"], "课程反复提醒新手别把低概率赌注包装成好交易。"]
+];
+
+function buildQuizExpansions(specs) {
+  return specs.map(([section, focus, correct, wrongs, exp]) => {
+    const prompt = `关于${focus}，哪项说法正确？`;
+    return buildExpandedQuestion(section, prompt, correct, wrongs, exp);
+  });
+}
+
+function buildScenarioExpansions(specs) {
+  return specs.map(([section, situation, correct, wrongs, exp]) => {
+    const prompt = `${situation}。此时更合理的处理是：`;
+    return buildExpandedQuestion(section, prompt, correct, wrongs, exp);
+  });
+}
+
+function buildExpandedQuestion(section, prompt, correct, wrongs, exp) {
+  const choices = [correct, ...wrongs];
+  const opts = getDeterministicOptionOrder(`${section}|${prompt}|${correct}`)
+    .map(orderIndex => choices[orderIndex]);
+  return {
+    section,
+    q: prompt,
+    opts,
+    a: opts.indexOf(correct),
+    exp
+  };
+}
+
+function getDeterministicOptionOrder(seed) {
+  const orders = [
+    [0, 1, 2, 3],
+    [1, 0, 2, 3],
+    [2, 1, 0, 3],
+    [3, 1, 2, 0]
+  ];
+  return orders[parseInt(hashString(seed), 36) % orders.length];
+}
+
+function getCorrectAnswerText(item) {
+  return normalizeQuestionText(item?.opts?.[item.a] || "");
+}
+
+function appendUniqueQuizQuestions(targetBank, additions) {
+  additions.forEach(item => {
+    const answerText = getCorrectAnswerText(item);
+    const duplicated = targetBank.some(existing =>
+      existing.section === item.section
+      && getCorrectAnswerText(existing) === answerText
+    );
+    if (!duplicated) targetBank.push(item);
+  });
+}
+
+appendUniqueQuizQuestions(quizBank, [
+  ...buildQuizExpansions(quizExpansionSpecs),
+  {
+    section: "10A",
+    q: "课程里为什么会把巨大的趋势K线也视作一种缺口？",
+    opts: ["因为它代表了突然的重新定价与动能跃迁", "因为所有大K线都没有影线", "因为只有日线才允许这样理解", "因为它一定等于衰竭缺口"],
+    a: 0,
+    exp: "Brooks 把缺口理解得更广，巨大的趋势K线同样表达了价格在快速寻找新平衡。"
+  }
+]);
+
+scenarios.push(...buildScenarioExpansions(scenarioExpansionSpecs));
+
+const introQuizBank = buildQuizExpansions(introQuizSpecs);
+const introScenarios = buildScenarioExpansions(introScenarioSpecs);
+
+const allQuizBank = [...introQuizBank, ...quizBank];
+const allScenarioBank = [...introScenarios, ...scenarios];
+
+const chartChapterTitles = {
+  all: "全部章节",
+  8: "第8章 图表分析基础",
+  9: "第9章 回调与反转",
+  10: "第10章 买卖压力与通道",
+  11: "第11章 缺口专题"
+};
+
+const modeLabels = {
+  quiz: "基础题库",
+  scenario: "情境训练",
+  mixed: "混合训练",
+  wrong: "错题库"
+};
+
+const WRONG_STORAGE_KEY = "brooks_wrong_question_ids";
+const MASTERY_STORAGE_KEY = "brooks_mastered_question_ids";
+const ANSWERED_STORAGE_KEY = "brooks_answered_question_stats";
+const TRAINING_UNIT_STORAGE_KEY = "brooks_selected_unit";
+
+const heroTitle = document.getElementById("heroTitle");
+const heroText = document.getElementById("heroText");
+const unitSelect = document.getElementById("unit");
+const chapterSelect = document.getElementById("chapter");
+const sectionSelect = document.getElementById("section");
+const chapterField = document.getElementById("chapterField");
+const chapterLabel = document.getElementById("chapterLabel");
+const sectionLabel = document.getElementById("sectionLabel");
+const modeSelect = document.getElementById("mode");
+const homeView = document.getElementById("homeView");
+const archiveView = document.getElementById("archiveView");
+const archiveBtn = document.getElementById("archiveBtn");
+const backHomeBtn = document.getElementById("backHomeBtn");
+const archiveScopeText = document.getElementById("archiveScopeText");
+const archiveScopeBadge = document.getElementById("archiveScopeBadge");
+const archiveMasteryTab = document.getElementById("archiveMasteryTab");
+const archiveHistoryTab = document.getElementById("archiveHistoryTab");
+const archiveMasteryPanel = document.getElementById("archiveMasteryPanel");
+const archiveHistoryPanel = document.getElementById("archiveHistoryPanel");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+const countStat = document.getElementById("countStat");
+const sectionStat = document.getElementById("sectionStat");
+const sectionStatLabel = document.getElementById("sectionStatLabel");
+const scopeStat = document.getElementById("scopeStat");
+const modeStat = document.getElementById("modeStat");
+const sessionBadge = document.getElementById("sessionBadge");
+const progressText = document.getElementById("progressText");
+const scoreText = document.getElementById("scoreText");
+const barFill = document.getElementById("barFill");
+const panel = document.getElementById("panel");
+const feedbackPop = document.getElementById("feedbackPop");
+const feedbackFace = document.getElementById("feedbackFace");
+const feedbackTitle = document.getElementById("feedbackTitle");
+const feedbackBody = document.getElementById("feedbackBody");
+const feedbackNextBtn = document.getElementById("feedbackNextBtn");
+const feedbackActions = feedbackNextBtn.parentElement;
+const masteryHint = document.getElementById("masteryHint");
+const masteryDetail = document.getElementById("masteryDetail");
+const masteryDetailList = document.getElementById("masteryDetailList");
+const masteredList = document.getElementById("masteredList");
+const pendingList = document.getElementById("pendingList");
+const recentHistoryList = document.getElementById("recentHistoryList");
+const frequentWrongList = document.getElementById("frequentWrongList");
+
+const legacyIdMap = {};
+
+assignStableIdsToBank(introQuizBank, "quiz");
+assignStableIdsToBank(quizBank, "quiz");
+assignStableIdsToBank(introScenarios, "scenario");
+assignStableIdsToBank(scenarios, "scenario");
+
+const allQuestions = [...allQuizBank, ...allScenarioBank];
+const questionMap = new Map(allQuestions.map(item => [item.id, item]));
+const questionIdsBySection = sections.reduce((acc, section) => {
+  acc[section.code] = allQuestions
+    .filter(item => item.section === section.code)
+    .map(item => item.id);
+  return acc;
+}, {});
+
+let wrongQuestionIds = loadWrongQuestionIds();
+let masteredQuestionIds = loadMasteredQuestionIds();
+let answeredQuestionStats = loadAnsweredQuestionStats();
+
+let session = {
+  list: [],
+  index: 0,
+  score: 0,
+  answered: false,
+  results: [],
+  autoNextTimer: null
+};
+let currentView = "home";
+let currentArchiveTab = "mastery";
+
+function getSelectedUnit() {
+  return units[unitSelect.value] ? unitSelect.value : DEFAULT_UNIT;
+}
+
+function getUnitConfig(unit = getSelectedUnit()) {
+  return units[unit] || units[DEFAULT_UNIT];
+}
+
+function getSectionsByUnit(unit = getSelectedUnit()) {
+  return sections.filter(section => section.unit === unit);
+}
+
+function getScopeNoun(unit = getSelectedUnit()) {
+  return unit === "chart" ? "小节" : "主题";
+}
+
+function getSectionDisplayName(sectionCode) {
+  const section = sectionMap[sectionCode];
+  if (!section) return sectionCode;
+  return section.unit === "chart" ? `${section.code} · ${section.title}` : section.title;
+}
+
+function getQuestionTypeLabel(item) {
+  return item.kind === "scenario" ? "情境题" : "基础题";
+}
+
+function getScopeLabel() {
+  const unit = getSelectedUnit();
+  const unitConfig = getUnitConfig(unit);
+  const sectionCode = sectionSelect.value;
+  if (sectionCode !== "all") {
+    return `${unitConfig.label} · ${getSectionDisplayName(sectionCode)}`;
+  }
+  if (unit === "chart" && chapterSelect.value !== "all") {
+    return `${unitConfig.label} · ${chartChapterTitles[chapterSelect.value]} · 全部小节`;
+  }
+  return `${unitConfig.label} · ${unitConfig.allSectionsLabel}`;
+}
+
+function syncUnitUI() {
+  const unit = getSelectedUnit();
+  const unitConfig = getUnitConfig(unit);
+  const showChartControls = unit === "chart";
+  heroTitle.textContent = "Brooks 交易课程训练系统";
+  heroText.textContent = unitConfig.heroText;
+  chapterField.classList.toggle("hidden", !showChartControls);
+  chapterLabel.textContent = "章节范围";
+  sectionLabel.textContent = unitConfig.sectionLabel;
+  sectionStatLabel.textContent = unitConfig.sectionCountLabel;
+}
+
+function loadSelectedUnit() {
+  try {
+    const storage = getStorage();
+    if (!storage) return DEFAULT_UNIT;
+    const stored = storage.getItem(TRAINING_UNIT_STORAGE_KEY);
+    return units[stored] ? stored : DEFAULT_UNIT;
+  } catch (error) {
+    return DEFAULT_UNIT;
+  }
+}
+
+function saveSelectedUnit() {
+  try {
+    const storage = getStorage();
+    if (!storage) return;
+    storage.setItem(TRAINING_UNIT_STORAGE_KEY, getSelectedUnit());
+  } catch (error) {
+    // ignore storage failures so the trainer can still run
+  }
+}
+
+function populateChapterOptions() {
+  chapterSelect.innerHTML = Object.entries(chartChapterTitles)
+    .map(([value, label]) => `<option value="${value}">${label}</option>`)
+    .join("");
+  if (!chartChapterTitles[chapterSelect.value]) chapterSelect.value = "all";
+}
+
+function init() {
+  saveWrongQuestionIds();
+  saveMasteredQuestionIds();
+  saveAnsweredQuestionStats();
+  unitSelect.value = loadSelectedUnit();
+  populateChapterOptions();
+  syncUnitUI();
+  if (getSelectedUnit() !== "chart") chapterSelect.value = "all";
+  populateSectionOptions();
+  updateScopeInfo();
+  saveSelectedUnit();
+
+  unitSelect.addEventListener("change", () => {
+    saveSelectedUnit();
+    syncUnitUI();
+    chapterSelect.value = "all";
+    populateSectionOptions();
+    updateScopeInfo();
+    resetSession();
+  });
+  chapterSelect.addEventListener("change", () => {
+    populateSectionOptions();
+    updateScopeInfo();
+  });
+  sectionSelect.addEventListener("change", updateScopeInfo);
+  modeSelect.addEventListener("change", updateScopeInfo);
+  document.getElementById("startBtn").addEventListener("click", start);
+  archiveBtn.addEventListener("click", () => openArchive("mastery"));
+  document.getElementById("resetBtn").addEventListener("click", resetSession);
+  document.getElementById("clearWrongBtn").addEventListener("click", clearWrongBank);
+  clearHistoryBtn.addEventListener("click", clearAnsweredHistory);
+  backHomeBtn.addEventListener("click", goHome);
+  archiveMasteryTab.addEventListener("click", () => openArchive("mastery"));
+  archiveHistoryTab.addEventListener("click", () => openArchive("history"));
+  feedbackNextBtn.addEventListener("click", () => {
+    hideFeedbackPop();
+    next();
+  });
+  globalThis.addEventListener("hashchange", applyRouteFromHash);
+  applyRouteFromHash();
+}
+
+function populateSectionOptions() {
+  const unit = getSelectedUnit();
+  const currentValue = sectionSelect.value;
+  const filtered = getSectionsByUnit(unit).filter(section => {
+    if (unit !== "chart") return true;
+    return chapterSelect.value === "all" || section.chapter === chapterSelect.value;
+  });
+  const allLabel = unit === "chart"
+    ? (chapterSelect.value === "all" ? "全部小节" : `${chartChapterTitles[chapterSelect.value]} · 全部小节`)
+    : "全部主题";
+  sectionSelect.innerHTML = [
+    `<option value="all">${allLabel}</option>`,
+    ...filtered.map(section => `<option value="${section.code}">${getSectionDisplayName(section.code)}</option>`)
+  ].join("");
+  sectionSelect.value = filtered.some(section => section.code === currentValue) ? currentValue : "all";
+}
+
+function getVisibleSections() {
+  const unit = getSelectedUnit();
+  const sectionCode = sectionSelect.value;
+  return getSectionsByUnit(unit).filter(section => {
+    if (sectionCode !== "all") return section.code === sectionCode;
+    if (unit === "chart" && chapterSelect.value !== "all") return section.chapter === chapterSelect.value;
+    return true;
+  });
+}
+
+function getBank(mode) {
+  if (mode === "quiz") return allQuizBank;
+  if (mode === "scenario") return allScenarioBank;
+  if (mode === "wrong") return getWrongQuestions();
+  return shuffle([...allQuizBank, ...allScenarioBank]);
+}
+
+function getFilteredQuestions(mode) {
+  const unit = getSelectedUnit();
+  const sectionCode = sectionSelect.value;
+  return getBank(mode).filter(item => {
+    const section = sectionMap[item.section];
+    if (!section) return false;
+    if (section.unit !== unit) return false;
+    if (sectionCode !== "all") return item.section === sectionCode;
+    if (unit === "chart" && chapterSelect.value !== "all") return section.chapter === chapterSelect.value;
+    return true;
+  });
+}
+
+function updateScopeInfo() {
+  syncUnitUI();
+  const mode = modeSelect.value;
+  const visibleSections = getVisibleSections();
+  const questionCount = getFilteredQuestions(mode).length;
+  const scopeLabel = getScopeLabel();
+
+  countStat.textContent = `${questionCount}题`;
+  sectionStat.textContent = String(visibleSections.length);
+  scopeStat.textContent = scopeLabel;
+  modeStat.textContent = mode === "wrong"
+    ? `错题 ${wrongQuestionIds.length} 题`
+    : modeLabels[mode];
+  updateArchiveSummary(scopeLabel);
+  updateMasteryBoard(visibleSections);
+  updateHistoryBoard(visibleSections);
+}
+
+function updateArchiveSummary(scopeLabel) {
+  const unit = getSelectedUnit();
+  const scopeNoun = getScopeNoun(unit);
+  archiveScopeBadge.textContent = scopeLabel;
+  archiveScopeText.textContent = `当前单元：${getUnitConfig(unit).label}；范围：${scopeLabel.replace(`${getUnitConfig(unit).label} · `, "")}。档案按当前单元与范围筛选展示，不受训练模式影响。`;
+  masteryHint.textContent = `过关条件：本${scopeNoun}全部题目都至少答对一次`;
+}
+
+function parseRouteFromHash() {
+  const hash = (globalThis.location?.hash || "").replace(/^#/, "");
+  if (hash === "archive-history") return { view: "archive", tab: "history" };
+  if (hash === "archive" || hash === "archive-mastery") return { view: "archive", tab: "mastery" };
+  return { view: "home", tab: "mastery" };
+}
+
+function applyRouteFromHash() {
+  const route = parseRouteFromHash();
+  currentView = route.view;
+  currentArchiveTab = route.tab;
+
+  homeView.classList.toggle("hidden", currentView !== "home");
+  archiveView.classList.toggle("hidden", currentView !== "archive");
+  archiveMasteryTab.classList.toggle("active", currentArchiveTab === "mastery");
+  archiveHistoryTab.classList.toggle("active", currentArchiveTab === "history");
+  archiveMasteryPanel.classList.toggle("hidden", currentArchiveTab !== "mastery");
+  archiveHistoryPanel.classList.toggle("hidden", currentArchiveTab !== "history");
+}
+
+function setRouteHash(hash) {
+  if (!("location" in globalThis)) {
+    applyRouteFromHash();
+    return;
+  }
+  if (globalThis.location.hash === hash) {
+    applyRouteFromHash();
+    return;
+  }
+  globalThis.location.hash = hash;
+}
+
+function openArchive(tab = "mastery") {
+  setRouteHash(tab === "history" ? "#archive-history" : "#archive");
+}
+
+function goHome() {
+  setRouteHash("#home");
+}
+
+function start() {
+  const mode = modeSelect.value;
+  const pool = shuffle([...getFilteredQuestions(mode)]);
+  hideFeedbackPop();
+
+  session = {
+    list: pool,
+    index: 0,
+    score: 0,
+    answered: false,
+    results: [],
+    autoNextTimer: null
+  };
+
+  sessionBadge.textContent = `${getUnitConfig().label} · ${modeLabels[mode]}`;
+  render();
+}
+
+function resetSession() {
+  session = {
+    list: [],
+    index: 0,
+    score: 0,
+    answered: false,
+    results: [],
+    autoNextTimer: null
+  };
+  sessionBadge.textContent = "等待开始";
+  progressText.textContent = "进度：0/0";
+  scoreText.textContent = "得分：0";
+  barFill.style.width = "0%";
+  hideFeedbackPop();
+  panel.innerHTML = '<p class="empty">先选择训练单元、训练模式和范围，然后点击“开始训练”。</p>';
+}
+
+function render() {
+  if (!session.list.length) {
+    panel.innerHTML = modeSelect.value === "wrong"
+      ? '<p class="empty">错题库当前为空。先去正常刷题，答错的题会自动进入这里。</p>'
+      : '<p class="empty">当前筛选范围下还没有题目，请切换单元、模式或范围后再试。</p>';
+    progressText.textContent = "进度：0/0";
+    scoreText.textContent = "得分：0";
+    barFill.style.width = "0%";
+    return;
+  }
+
+  if (session.index >= session.list.length) {
+    renderResult();
+    return;
+  }
+
+  const item = session.list[session.index];
+  const section = sectionMap[item.section];
+  const progress = `${session.index + 1}/${session.list.length}`;
+  const percent = ((session.index) / session.list.length) * 100;
+
+  progressText.textContent = `进度：${progress}`;
+  scoreText.textContent = `得分：${session.score}`;
+  barFill.style.width = `${percent}%`;
+
+  panel.innerHTML = `
+    <div class="meta">
+      <span>${getUnitConfig(section.unit).label}</span>
+      ${section.unit === "chart" ? `<span>${section.code}</span>` : ""}
+      <span>${section.title}</span>
+      <span>${getQuestionTypeLabel(item)}</span>
+    </div>
+    <h3 class="question">${item.q}</h3>
+    <div class="options">
+      ${item.opts.map((opt, idx) => `<button class="option" data-index="${idx}">${String.fromCharCode(65 + idx)}. ${opt}</button>`).join("")}
+    </div>
+    <div class="feedback" id="feedback"></div>
+  `;
+
+  panel.querySelectorAll(".option").forEach(button => {
+    button.addEventListener("click", () => checkAnswer(Number(button.dataset.index)));
+  });
+}
+
+function checkAnswer(index) {
+  if (session.answered) return;
+  session.answered = true;
+
+  const item = session.list[session.index];
+  const buttons = [...panel.querySelectorAll(".option")];
+  const correct = index === item.a;
+
+  buttons.forEach((button, idx) => {
+    button.disabled = true;
+    if (idx === item.a) button.classList.add("correct");
+    if (idx === index && idx !== item.a) button.classList.add("wrong");
+  });
+
+  if (correct) session.score += 1;
+  recordAnsweredQuestion(item.id, correct);
+  recordMastery(item.id, correct);
+  if (correct) {
+    removeWrongQuestion(item.id);
+  } else {
+    addWrongQuestion(item.id);
+  }
+  session.results.push({ section: item.section, correct });
+  scoreText.textContent = `得分：${session.score}`;
+  updateScopeInfo();
+  showFeedbackPop(correct, item);
+}
+
+function next() {
+  session.index += 1;
+  session.answered = false;
+  render();
+}
+
+function renderResult() {
+  hideFeedbackPop();
+  progressText.textContent = `进度：${session.list.length}/${session.list.length}`;
+  scoreText.textContent = `得分：${session.score}`;
+  barFill.style.width = "100%";
+
+  const statsBySection = getVisibleSections().map(section => {
+    const total = session.results.filter(item => item.section === section.code).length;
+    const correct = session.results.filter(item => item.section === section.code && item.correct).length;
+    return { section, total, correct };
+  }).filter(item => item.total > 0);
+
+  panel.innerHTML = `
+    <div class="result">
+      <div class="result-box">
+        <h3>本轮完成：${session.score} / ${session.list.length}</h3>
+        <p>建议优先回看正确率偏低的${getScopeNoun()}，再用“情境训练”或“错题库”复刷一次。当前错题库共 ${wrongQuestionIds.length} 题。</p>
+      </div>
+      <div class="result-list">
+        ${statsBySection.map(item => `
+          <div class="result-item">
+            <span>${getSectionDisplayName(item.section.code)}</span>
+            <strong>${item.correct} / ${item.total}</strong>
+          </div>
+        `).join("")}
+      </div>
+      <button class="primary" id="restartBtn">再来一轮</button>
+    </div>
+  `;
+
+  document.getElementById("restartBtn").addEventListener("click", start);
+}
+
+function showFeedbackPop(correct, item) {
+  feedbackPop.className = `feedback-pop show ${correct ? "ok" : "bad"}`;
+  feedbackPop.setAttribute("aria-hidden", "false");
+  feedbackActions.classList.remove("hidden");
+  feedbackFace.textContent = correct ? "😄" : "🥲";
+  feedbackTitle.textContent = correct ? "答对了" : "原笔记这样说";
+
+  feedbackBody.innerHTML = `
+    <div class="feedback-block">
+      <span class="feedback-label">正确答案</span>
+      <span class="feedback-answer">${escapeHtml(item.opts[item.a])}</span>
+    </div>
+    <div class="feedback-block">
+      <span class="feedback-label">原笔记</span>
+      ${escapeHtml(getNotebookExcerpt(item))}
+    </div>
+    <div class="feedback-block">
+      <span class="feedback-label">我的解释</span>
+      ${escapeHtml(item.exp)}
+    </div>
+  `;
+  feedbackNextBtn.textContent = session.index + 1 >= session.list.length ? "查看结果" : "下一题";
+}
+
+function hideFeedbackPop() {
+  feedbackPop.className = "feedback-pop";
+  feedbackPop.setAttribute("aria-hidden", "true");
+  feedbackActions.classList.add("hidden");
+}
+
+function getStorage() {
+  if (typeof globalThis === "undefined" || !("localStorage" in globalThis)) return null;
+  return globalThis.localStorage;
+}
+
+function escapeHtml(text) {
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getNotebookExcerpt(item) {
+  return sectionNotebookExcerpts[item.section] || "这题对应的原笔记摘录还没单独整理出来，但解释部分已经按课程原意补上了。";
+}
+
+function normalizeQuestionText(text) {
+  return String(text || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function hashString(input) {
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function assignStableIdsToBank(bank, kind) {
+  const seen = new Map();
+  bank.forEach((item, index) => {
+    const fingerprint = [
+      item.section,
+      kind,
+      normalizeQuestionText(item.q),
+      ...item.opts.map(opt => normalizeQuestionText(opt)),
+      String(item.a)
+    ].join("|");
+    const baseId = `${kind}-${item.section}-${hashString(fingerprint)}`;
+    const count = (seen.get(baseId) || 0) + 1;
+    seen.set(baseId, count);
+    item.id = count === 1 ? baseId : `${baseId}-${count}`;
+    item.kind = kind;
+    legacyIdMap[`${kind}-${index + 1}`] = item.id;
+  });
+}
+
+function remapStoredQuestionIds(ids) {
+  if (!Array.isArray(ids)) return [];
+  return [...new Set(
+    ids
+      .map(id => {
+        if (questionMap.has(id)) return id;
+        if (legacyIdMap[id] && questionMap.has(legacyIdMap[id])) return legacyIdMap[id];
+        return null;
+      })
+      .filter(Boolean)
+  )];
+}
+
+function loadWrongQuestionIds() {
+  try {
+    const storage = getStorage();
+    if (!storage) return [];
+    const raw = storage.getItem(WRONG_STORAGE_KEY);
+    const ids = raw ? JSON.parse(raw) : [];
+    return remapStoredQuestionIds(ids);
+  } catch (error) {
+    return [];
+  }
+}
+
+function loadMasteredQuestionIds() {
+  try {
+    const storage = getStorage();
+    if (!storage) return [];
+    const raw = storage.getItem(MASTERY_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return remapStoredQuestionIds(parsed);
+  } catch (error) {
+    return [];
+  }
+}
+
+function loadAnsweredQuestionStats() {
+  try {
+    const storage = getStorage();
+    if (!storage) return {};
+    const raw = storage.getItem(ANSWERED_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    if (!parsed || typeof parsed !== "object") return {};
+
+    return Object.entries(parsed).reduce((acc, [storedId, stats]) => {
+      const id = questionMap.has(storedId) ? storedId : legacyIdMap[storedId];
+      if (!id || !questionMap.has(id)) return acc;
+      if (!stats || typeof stats !== "object") return acc;
+      const attempts = Number(stats.attempts) || 0;
+      const correct = Number(stats.correct) || 0;
+      const wrong = Number(stats.wrong) || 0;
+      acc[id] = {
+        attempts: Math.max(0, attempts),
+        correct: Math.max(0, correct),
+        wrong: Math.max(0, wrong),
+        lastResult: stats.lastResult === "correct" ? "correct" : "wrong",
+        lastAt: typeof stats.lastAt === "string" ? stats.lastAt : ""
+      };
+      return acc;
+    }, {});
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveMasteredQuestionIds() {
+  try {
+    const storage = getStorage();
+    if (!storage) return;
+    storage.setItem(MASTERY_STORAGE_KEY, JSON.stringify(masteredQuestionIds));
+  } catch (error) {
+    // ignore storage failures so the trainer can still run
+  }
+}
+
+function saveAnsweredQuestionStats() {
+  try {
+    const storage = getStorage();
+    if (!storage) return;
+    storage.setItem(ANSWERED_STORAGE_KEY, JSON.stringify(answeredQuestionStats));
+  } catch (error) {
+    // ignore storage failures so the trainer can still run
+  }
+}
+
+function recordAnsweredQuestion(questionId, correct) {
+  const current = answeredQuestionStats[questionId] || {
+    attempts: 0,
+    correct: 0,
+    wrong: 0,
+    lastResult: "wrong",
+    lastAt: ""
+  };
+
+  answeredQuestionStats[questionId] = {
+    attempts: current.attempts + 1,
+    correct: current.correct + (correct ? 1 : 0),
+    wrong: current.wrong + (correct ? 0 : 1),
+    lastResult: correct ? "correct" : "wrong",
+    lastAt: new Date().toISOString()
+  };
+  saveAnsweredQuestionStats();
+}
+
+function recordMastery(questionId, correct) {
+  if (!correct || masteredQuestionIds.includes(questionId)) return;
+  masteredQuestionIds.unshift(questionId);
+  saveMasteredQuestionIds();
+  updateScopeInfo();
+}
+
+function isSectionPassed(sectionCode) {
+  const ids = questionIdsBySection[sectionCode] || [];
+  return ids.length > 0 && ids.every(id => masteredQuestionIds.includes(id));
+}
+
+function getSectionProgressText(sectionCode) {
+  const ids = questionIdsBySection[sectionCode] || [];
+  const mastered = ids.filter(id => masteredQuestionIds.includes(id)).length;
+  if (!ids.length) return "无题目";
+  return mastered === ids.length ? "完全正确" : `${mastered}/${ids.length}`;
+}
+
+function updateMasteryBoard(visibleSections) {
+  const scopeNoun = getScopeNoun();
+  const passed = [];
+  const pending = [];
+
+  visibleSections.forEach(section => {
+    const text = `${getSectionDisplayName(section.code)} · ${getSectionProgressText(section.code)}`;
+    if (isSectionPassed(section.code)) {
+      passed.push(text);
+    } else {
+      pending.push(text);
+    }
+  });
+
+  masteredList.innerHTML = passed.length
+    ? passed.map(text => `<span class="mastery-chip pass">${text}</span>`).join("")
+    : `<span class="mastery-chip pending">当前范围还没有过关${scopeNoun}</span>`;
+
+  pendingList.innerHTML = pending.length
+    ? pending.map(text => `<span class="mastery-chip pending">${text}</span>`).join("")
+    : '<span class="mastery-chip pass">当前范围全部已过关</span>';
+
+  updatePendingDetailList(visibleSections);
+}
+
+function updatePendingDetailList(visibleSections) {
+  const scopeNoun = getScopeNoun();
+  const pendingSections = visibleSections.filter(section => !isSectionPassed(section.code));
+  if (!pendingSections.length) {
+    masteryDetailList.innerHTML = `<div class="mastery-detail-item"><strong>当前范围全部已过关</strong><span>这一范围内的${scopeNoun}都已经达到完全正确。</span></div>`;
+    return;
+  }
+
+  masteryDetailList.innerHTML = pendingSections.map(section => {
+    const remainingQuestions = (questionIdsBySection[section.code] || [])
+      .filter(id => !masteredQuestionIds.includes(id))
+      .map(id => questionMap.get(id)?.q)
+      .filter(Boolean);
+
+    return `
+      <div class="mastery-detail-item">
+        <strong>${getSectionDisplayName(section.code)}</strong>
+        <span>当前状态：${getSectionProgressText(section.code)}</span>
+        <span>未过关题点：${remainingQuestions.join("；") || "暂无"}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+function shortenText(text, maxLength = 34) {
+  const value = String(text || "").trim();
+  return value.length > maxLength ? `${value.slice(0, maxLength)}...` : value;
+}
+
+function formatHistoryTime(isoString) {
+  if (!isoString) return "时间未记录";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "时间未记录";
+  return date.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+}
+
+function updateHistoryBoard(visibleSections) {
+  const visibleCodes = new Set(visibleSections.map(section => section.code));
+  const historyItems = Object.entries(answeredQuestionStats)
+    .map(([id, stats]) => {
+      const question = questionMap.get(id);
+      if (!question || !visibleCodes.has(question.section)) return null;
+      return { question, stats };
+    })
+    .filter(Boolean);
+
+  const recentItems = historyItems
+    .filter(item => item.stats.lastAt)
+    .sort((a, b) => (b.stats.lastAt || "").localeCompare(a.stats.lastAt || ""))
+    .slice(0, 8);
+
+  const frequentWrongItems = historyItems
+    .filter(item => item.stats.wrong >= 2)
+    .sort((a, b) => {
+      if (b.stats.wrong !== a.stats.wrong) return b.stats.wrong - a.stats.wrong;
+      if (b.stats.attempts !== a.stats.attempts) return b.stats.attempts - a.stats.attempts;
+      return (b.stats.lastAt || "").localeCompare(a.stats.lastAt || "");
+    })
+    .slice(0, 8);
+
+  recentHistoryList.innerHTML = recentItems.length
+    ? recentItems.map(item => `
+      <div class="history-item">
+        <strong>${getSectionDisplayName(item.question.section)} · ${shortenText(item.question.q)}</strong>
+        <span>${item.stats.lastResult === "correct" ? "最近一次答对" : "最近一次答错"} · 共做 ${item.stats.attempts} 次 · ${formatHistoryTime(item.stats.lastAt)}</span>
+      </div>
+    `).join("")
+    : '<div class="history-item"><strong>暂无记录</strong><span>当前训练范围里还没有做题历史。</span></div>';
+
+  frequentWrongList.innerHTML = frequentWrongItems.length
+    ? frequentWrongItems.map(item => `
+      <div class="history-item">
+        <strong>${getSectionDisplayName(item.question.section)} · ${shortenText(item.question.q)}</strong>
+        <span>累计答错 ${item.stats.wrong} 次 · 共做 ${item.stats.attempts} 次</span>
+      </div>
+    `).join("")
+    : '<div class="history-item"><strong>暂无反复错题</strong><span>当前训练范围内还没有累计错到 2 次以上的题。</span></div>';
+}
+
+function saveWrongQuestionIds() {
+  try {
+    const storage = getStorage();
+    if (!storage) return;
+    storage.setItem(WRONG_STORAGE_KEY, JSON.stringify(wrongQuestionIds));
+  } catch (error) {
+    // ignore storage failures so the trainer can still run
+  }
+}
+
+function getWrongQuestions() {
+  return wrongQuestionIds
+    .map(id => questionMap.get(id))
+    .filter(Boolean);
+}
+
+function addWrongQuestion(id) {
+  if (wrongQuestionIds.includes(id)) return;
+  wrongQuestionIds.unshift(id);
+  saveWrongQuestionIds();
+}
+
+function removeWrongQuestion(id) {
+  const nextIds = wrongQuestionIds.filter(item => item !== id);
+  if (nextIds.length === wrongQuestionIds.length) return;
+  wrongQuestionIds = nextIds;
+  saveWrongQuestionIds();
+}
+
+function clearWrongBank() {
+  if (!wrongQuestionIds.length) {
+    feedbackPop.className = "feedback-pop show ok";
+    feedbackPop.setAttribute("aria-hidden", "false");
+    feedbackFace.textContent = "🧹";
+    feedbackTitle.textContent = "错题库为空";
+    feedbackBody.textContent = "当前没有需要清空的错题。";
+    globalThis.setTimeout(hideFeedbackPop, 900);
+    return;
+  }
+
+  if (typeof globalThis.confirm === "function" && !globalThis.confirm("确定清空错题库吗？")) return;
+  wrongQuestionIds = [];
+  saveWrongQuestionIds();
+  updateScopeInfo();
+
+  if (modeSelect.value === "wrong") {
+    resetSession();
+  }
+
+  feedbackPop.className = "feedback-pop show ok";
+  feedbackPop.setAttribute("aria-hidden", "false");
+  feedbackFace.textContent = "🧹";
+  feedbackTitle.textContent = "已清空";
+  feedbackBody.textContent = "错题库已经清空。";
+  globalThis.setTimeout(hideFeedbackPop, 900);
+}
+
+function clearAnsweredHistory() {
+  if (!Object.keys(answeredQuestionStats).length) {
+    feedbackPop.className = "feedback-pop show ok";
+    feedbackPop.setAttribute("aria-hidden", "false");
+    feedbackFace.textContent = "🧾";
+    feedbackTitle.textContent = "记录为空";
+    feedbackBody.textContent = "当前没有需要清空的做题记录。";
+    globalThis.setTimeout(hideFeedbackPop, 900);
+    return;
+  }
+
+  if (typeof globalThis.confirm === "function" && !globalThis.confirm("确定清空做题记录吗？")) return;
+  answeredQuestionStats = {};
+  saveAnsweredQuestionStats();
+  updateScopeInfo();
+
+  feedbackPop.className = "feedback-pop show ok";
+  feedbackPop.setAttribute("aria-hidden", "false");
+  feedbackFace.textContent = "🧾";
+  feedbackTitle.textContent = "已清空";
+  feedbackBody.textContent = "做题记录已经清空。";
+  globalThis.setTimeout(hideFeedbackPop, 900);
+}
+
+function shuffle(list) {
+  const arr = [...list];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+init();
+</script>
+</body>
+</html>
