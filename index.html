@@ -808,6 +808,784 @@ select{
     font-size:21px;
   }
 }
+
+/* Mobile-first monochrome interface */
+:root{
+  color-scheme:light;
+  --bg:#ffffff;
+  --bg-accent:#f2f2f2;
+  --card:#ffffff;
+  --line:#111111;
+  --text:#000000;
+  --muted:#5f5f5f;
+  --brand:#000000;
+  --brand-soft:#f2f2f2;
+  --ok:#000000;
+  --ok-soft:#000000;
+  --bad:#000000;
+  --bad-soft:#ffffff;
+  --shadow:none;
+}
+
+html{
+  background:#ffffff;
+  scroll-behavior:smooth;
+}
+
+body{
+  min-height:100dvh;
+  background:#ffffff;
+  color:#000000;
+  -webkit-font-smoothing:antialiased;
+}
+
+button,
+select{
+  min-height:48px;
+  border-radius:0;
+  font:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:focus-visible,
+select:focus-visible{
+  outline:3px solid #000000;
+  outline-offset:2px;
+}
+
+.shell{
+  width:100%;
+  max-width:760px;
+  min-height:100dvh;
+  padding:max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+.hero{
+  display:block;
+  margin:0;
+  padding:4px 2px 14px;
+  border-bottom:2px solid #000000;
+}
+
+.hero h1{
+  margin:0 0 6px;
+  font-size:22px;
+  line-height:1.2;
+  letter-spacing:-0.02em;
+}
+
+.hero p{
+  margin:0;
+  color:#4a4a4a;
+  font-size:13px;
+  line-height:1.55;
+}
+
+.card{
+  background:#ffffff;
+  border:1px solid #000000;
+  border-radius:0;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+
+.controls,
+.trainer{
+  padding:12px;
+}
+
+.controls{
+  margin:12px 0 0;
+}
+
+.control-grid{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px 8px;
+}
+
+.field label{
+  margin-bottom:5px;
+  color:#4a4a4a;
+  font-size:12px;
+  font-weight:700;
+}
+
+select{
+  height:48px;
+  padding:0 10px;
+  border:1px solid #000000;
+  background:#ffffff;
+  color:#000000;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+  margin-top:12px;
+}
+
+.actions button{
+  min-width:0;
+  padding:10px 8px;
+  font-size:14px;
+  line-height:1.25;
+}
+
+#startBtn,
+#clearWrongBtn{
+  grid-column:1 / -1;
+}
+
+.primary{
+  border:1px solid #000000;
+  background:#000000;
+  color:#ffffff;
+  font-weight:800;
+}
+
+.secondary,
+.back-btn,
+.ghost-btn{
+  border:1px solid #000000;
+  background:#ffffff;
+  color:#000000;
+  font-weight:700;
+}
+
+.primary:active,
+.secondary:active,
+.back-btn:active,
+.ghost-btn:active,
+.archive-tab:active,
+.option:active:not(:disabled){
+  background:#d9d9d9;
+  color:#000000;
+}
+
+.stats{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #bdbdbd;
+}
+
+.stat strong{
+  font-size:14px;
+}
+
+.trainer{
+  margin-top:12px;
+  min-height:54dvh;
+}
+
+.topline{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) auto;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+}
+
+.trainer h2{
+  margin:0;
+  font-size:14px;
+  line-height:1.35;
+}
+
+.badge{
+  min-width:0;
+  padding:5px 8px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+  font-size:11px;
+  line-height:1.3;
+}
+
+.progress-wrap{
+  position:sticky;
+  top:0;
+  z-index:5;
+  margin:0;
+  padding:8px 0 10px;
+  border-bottom:1px solid #000000;
+  background:#ffffff;
+}
+
+.progress-text{
+  margin-bottom:7px;
+  color:#3d3d3d;
+  font-size:12px;
+  font-weight:700;
+}
+
+.bar{
+  height:4px;
+  border-radius:0;
+  background:#d6d6d6;
+}
+
+.bar-fill{
+  background:#000000;
+}
+
+.question-shell{
+  min-height:42dvh;
+  padding:16px 0 4px;
+  border:0;
+  border-radius:0;
+  background:#ffffff;
+}
+
+.meta{
+  gap:5px;
+  margin-bottom:12px;
+}
+
+.meta span{
+  padding:4px 6px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+  font-size:10px;
+  line-height:1.2;
+}
+
+.question{
+  margin:0 0 16px;
+  font-size:20px;
+  line-height:1.45;
+  letter-spacing:-0.01em;
+}
+
+.options{
+  gap:10px;
+}
+
+.option{
+  min-height:54px;
+  padding:13px 12px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+  font-size:15px;
+  line-height:1.5;
+  transition:none;
+}
+
+.option:hover:not(:disabled){
+  transform:none;
+  border-color:#000000;
+  box-shadow:none;
+}
+
+.option.correct{
+  border:2px solid #000000;
+  background:#000000;
+  color:#ffffff;
+}
+
+.option.correct::after{
+  content:"  ✓";
+  font-weight:900;
+}
+
+.option.wrong{
+  border:2px dashed #000000;
+  background:#ffffff;
+  color:#000000;
+  text-decoration:line-through;
+}
+
+.feedback.ok,
+.feedback.bad{
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+}
+
+.empty{
+  margin:0;
+  padding:24px 4px;
+  color:#4a4a4a;
+  font-size:15px;
+  line-height:1.7;
+}
+
+.result-box,
+.result-item{
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+}
+
+.result-box{
+  padding:16px;
+}
+
+.result-box h3{
+  font-size:20px;
+}
+
+.archive{
+  margin-top:12px;
+  padding:12px;
+  gap:12px;
+}
+
+.archive-topbar{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.back-btn{
+  width:100%;
+  min-height:48px;
+  padding:10px 12px;
+  border-radius:0;
+}
+
+.archive-heading{
+  min-width:0;
+}
+
+.archive-heading h2{
+  font-size:22px;
+}
+
+.archive-heading p,
+.archive-section-head p{
+  color:#4a4a4a;
+}
+
+.archive-tabs{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:0;
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#ffffff;
+}
+
+.archive-tab{
+  width:100%;
+  min-height:48px;
+  padding:10px 8px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+}
+
+.archive-tab + .archive-tab{
+  border-left:0;
+}
+
+.archive-tab.active{
+  border-color:#000000;
+  background:#000000;
+  color:#ffffff;
+}
+
+.archive-section{
+  padding:12px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+}
+
+.archive-section-head{
+  display:block;
+}
+
+.ghost-btn{
+  width:100%;
+  min-height:44px;
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:0;
+}
+
+.mastery-row{
+  grid-template-columns:1fr;
+  gap:5px;
+}
+
+.mastery-chip,
+.mastery-chip.pass,
+.mastery-chip.pending{
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+}
+
+.mastery-chip.pass{
+  background:#000000;
+  color:#ffffff;
+}
+
+.mastery-detail,
+.mastery-detail-item,
+.history-block,
+.history-item{
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+}
+
+details.mastery-detail-item{
+  padding:0;
+}
+
+.mastery-detail-item summary{
+  position:relative;
+  min-height:48px;
+  padding:10px 38px 10px 10px;
+  cursor:pointer;
+  list-style:none;
+}
+
+.mastery-detail-item summary::-webkit-details-marker{
+  display:none;
+}
+
+.mastery-detail-item summary::after{
+  content:"+";
+  position:absolute;
+  top:50%;
+  right:12px;
+  width:22px;
+  height:22px;
+  border:1px solid #000000;
+  line-height:19px;
+  text-align:center;
+  transform:translateY(-50%);
+}
+
+.mastery-detail-item[open] summary{
+  border-bottom:1px solid #000000;
+}
+
+.mastery-detail-item[open] summary::after{
+  content:"−";
+}
+
+.mastery-points{
+  padding:10px;
+}
+
+.history-group{
+  grid-template-columns:1fr;
+}
+
+.feedback-pop{
+  align-items:flex-end;
+  padding-top:max(24px, env(safe-area-inset-top));
+  background:rgba(0,0,0,0.55);
+}
+
+.feedback-card{
+  width:100%;
+  max-width:600px;
+  max-height:calc(100dvh - 24px);
+  padding:18px 14px max(14px, env(safe-area-inset-bottom));
+  overflow:auto;
+  border:2px solid #000000;
+  border-bottom:0;
+  border-radius:0;
+  background:#ffffff;
+  box-shadow:none;
+  transform:translateY(100%);
+  transition:transform 0.18s ease;
+}
+
+.feedback-pop.show .feedback-card{
+  transform:translateY(0);
+}
+
+.feedback-pop.ok .feedback-card,
+.feedback-pop.bad .feedback-card{
+  border-color:#000000;
+  background:#ffffff;
+}
+
+.feedback-face{
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  margin:0 auto 8px;
+  border:2px solid #000000;
+  border-radius:50%;
+  color:#000000;
+  font-size:22px;
+  font-weight:900;
+  animation:none;
+}
+
+.feedback-card h3{
+  font-size:21px;
+}
+
+.feedback-body{
+  max-height:52dvh;
+  color:#333333;
+}
+
+.feedback-block{
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+}
+
+.feedback-answer{
+  color:#000000;
+}
+
+.feedback-actions{
+  position:sticky;
+  bottom:0;
+  margin-top:12px;
+  padding-top:8px;
+  background:#ffffff;
+}
+
+.feedback-next{
+  width:100%;
+  min-height:50px;
+  border-radius:0;
+}
+
+@media (min-width: 700px){
+  .shell{
+    padding:24px;
+  }
+
+  .hero h1{
+    font-size:28px;
+  }
+
+  .control-grid{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+  }
+
+  .actions{
+    grid-template-columns:2fr repeat(3, minmax(0, 1fr));
+  }
+
+  #startBtn,
+  #clearWrongBtn{
+    grid-column:auto;
+  }
+
+  .controls,
+  .trainer,
+  .archive{
+    padding:18px;
+  }
+
+  .question-shell{
+    padding:22px 0 6px;
+  }
+
+  .question{
+    font-size:24px;
+  }
+
+  .feedback-card{
+    margin-bottom:24px;
+    border-bottom:2px solid #000000;
+  }
+}
+
+/* Persistent bottom action menu */
+.shell{
+  padding-bottom:calc(86px + env(safe-area-inset-bottom));
+}
+
+.bottom-menu{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  z-index:15;
+  width:min(760px, 100%);
+  margin:0;
+  padding:7px max(12px, env(safe-area-inset-right)) max(7px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+  background:#ffffff;
+}
+
+.bottom-menu button{
+  min-width:0;
+  min-height:48px;
+  padding:8px 4px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+  font-size:clamp(11px, 3.2vw, 14px);
+  font-weight:700;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+.bottom-menu button[aria-current="page"]{
+  background:#000000;
+  color:#ffffff;
+}
+
+.bottom-menu #startBtn{
+  grid-column:auto;
+}
+
+@media (max-width: 420px){
+  .bottom-menu{
+    gap:6px;
+    padding-right:8px;
+    padding-left:8px;
+  }
+
+  .bottom-menu button{
+    padding-right:2px;
+    padding-left:2px;
+  }
+}
+
+.control-grid.wrong-mode{
+  grid-template-columns:1fr;
+}
+
+/* Mobile training setup: show a calm, single-column reading order instead of a four-control strip. */
+.controls{
+  padding:0;
+  border:none;
+}
+
+.settings-section{
+  padding:22px 16px 0;
+}
+
+.settings-section + .settings-section{
+  margin-top:28px;
+  padding-top:24px;
+  border-top:1px solid #bdbdbd;
+}
+
+.settings-section.hidden{
+  display:none;
+}
+
+.settings-section.wrong-mode{
+  margin-top:18px;
+  padding-top:0;
+  border-top:0;
+}
+
+.settings-section.wrong-mode .settings-heading,
+.settings-section.wrong-mode .scope-controls{
+  display:none;
+}
+
+.settings-heading{
+  margin:0 0 14px;
+  font-size:20px;
+  line-height:1.2;
+  letter-spacing:-0.02em;
+}
+
+.settings-heading::before{
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:1em;
+  margin-right:9px;
+  vertical-align:-0.1em;
+  background:#000000;
+}
+
+.settings-section .control-grid{
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.settings-section .field{
+  position:relative;
+}
+
+.settings-section .field label{
+  position:absolute;
+  top:12px;
+  left:16px;
+  z-index:1;
+  margin:0;
+  pointer-events:none;
+  color:#5a5a5a;
+  font-size:12px;
+  font-weight:700;
+}
+
+.settings-section .field select{
+  height:76px;
+  padding:29px 40px 11px 16px;
+  font-size:20px;
+  font-weight:700;
+  text-overflow:ellipsis;
+}
+
+.settings-section .stats{
+  margin-top:18px;
+  padding:0 0 2px;
+  border:0;
+}
+
+.settings-section .stat strong{
+  font-size:18px;
+}
+
+.bottom-menu{
+  width:min(600px, 100%);
+  padding:5px max(12px, env(safe-area-inset-right)) max(5px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  gap:0;
+  border-top:1px solid #d0d0d0;
+}
+
+.bottom-menu button{
+  min-height:38px;
+  border:0;
+  background:transparent;
+  color:#6a6a6a;
+  font-size:13px;
+  font-weight:600;
+}
+
+.bottom-menu button + button{
+  border-left:1px solid #d0d0d0;
+}
+
+.bottom-menu button[aria-current="page"]{
+  background:transparent;
+  color:#000000;
+  font-weight:800;
+}
+
+.bottom-menu button[aria-current="page"]::after{
+  content:"";
+  display:block;
+  width:18px;
+  height:2px;
+  margin:4px auto 0;
+  background:#000000;
+}
 </style>
 </head>
 <body>
@@ -821,49 +1599,51 @@ select{
 
   <div class="view" id="homeView">
     <section class="card controls">
-      <div class="control-grid">
-        <div class="field">
-          <label for="unit">训练单元</label>
-          <select id="unit">
-            <option value="intro">入门</option>
-            <option value="chart">图表分析</option>
-          </select>
+      <section class="settings-section" id="settingsBasics" aria-labelledby="settingsBasicsTitle">
+        <h2 class="settings-heading" id="settingsBasicsTitle">基础设置</h2>
+        <div class="control-grid" id="controlGrid">
+          <div class="field" id="unitField">
+            <label for="unit">训练单元</label>
+            <select id="unit">
+              <option value="intro">入门</option>
+              <option value="chart">图表分析</option>
+            </select>
+          </div>
+          <div class="field" id="modeField">
+            <label for="mode">训练模式</label>
+            <select id="mode">
+              <option value="quiz">基础题库</option>
+              <option value="scenario">情境训练</option>
+              <option value="mixed">混合训练</option>
+              <option value="wrong">错题库</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label for="mode">训练模式</label>
-          <select id="mode">
-            <option value="quiz">基础题库</option>
-            <option value="scenario">情境训练</option>
-            <option value="mixed">混合训练</option>
-            <option value="wrong">错题库</option>
-          </select>
-        </div>
-        <div class="field" id="chapterField">
-          <label for="chapter" id="chapterLabel">章节范围</label>
-          <select id="chapter"></select>
-        </div>
-        <div class="field">
-          <label for="section" id="sectionLabel">小节范围</label>
-          <select id="section"></select>
-        </div>
-      </div>
+      </section>
 
-      <div class="actions">
-        <button class="primary" id="startBtn">开始训练</button>
-        <button class="secondary" id="archiveBtn">训练档案</button>
-        <button class="secondary" id="resetBtn">重置结果</button>
-        <button class="secondary" id="clearWrongBtn">清空错题库</button>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <strong id="countStat">0题</strong>
+      <section class="settings-section" id="settingsScope" aria-labelledby="settingsScopeTitle">
+        <h2 class="settings-heading" id="settingsScopeTitle">范围</h2>
+        <div class="control-grid scope-controls">
+          <div class="field" id="chapterField">
+            <label for="chapter" id="chapterLabel">章节范围</label>
+            <select id="chapter"></select>
+          </div>
+          <div class="field" id="sectionField">
+            <label for="section" id="sectionLabel">小节范围</label>
+            <select id="section"></select>
+          </div>
         </div>
-        <span class="hidden-meta" id="sectionStat">0</span>
-        <span class="hidden-meta" id="sectionStatLabel">当前覆盖主题</span>
-        <span class="hidden-meta" id="scopeStat">入门 · 全部主题</span>
-        <small class="hidden-meta" id="modeStat">基础题库</small>
-      </div>
+
+        <div class="stats">
+          <div class="stat">
+            <strong id="countStat">0题</strong>
+          </div>
+          <span class="hidden-meta" id="sectionStat">0</span>
+          <span class="hidden-meta" id="sectionStatLabel">当前覆盖主题</span>
+          <span class="hidden-meta" id="scopeStat">入门 · 全部主题</span>
+          <small class="hidden-meta" id="modeStat">基础题库</small>
+        </div>
+      </section>
     </section>
 
     <section class="card trainer">
@@ -950,11 +1730,16 @@ select{
       </div>
     </div>
   </section>
+
+  <nav class="actions bottom-menu" aria-label="训练菜单">
+    <button class="primary" id="startBtn" type="button" aria-current="page">训练</button>
+    <button class="secondary" id="wrongBtn" type="button">错题库</button>
+  </nav>
 </div>
 
 <div class="feedback-pop" id="feedbackPop" aria-hidden="true">
   <div class="feedback-card">
-    <span class="feedback-face" id="feedbackFace">🙂</span>
+    <span class="feedback-face" id="feedbackFace">—</span>
     <h3 id="feedbackTitle">回答完成</h3>
     <div class="feedback-body" id="feedbackBody"></div>
     <div class="feedback-actions">
@@ -1597,16 +2382,21 @@ const TRAINING_UNIT_STORAGE_KEY = "brooks_selected_unit";
 
 const heroTitle = document.getElementById("heroTitle");
 const heroText = document.getElementById("heroText");
+const controlGrid = document.getElementById("controlGrid");
+const settingsScope = document.getElementById("settingsScope");
+const unitField = document.getElementById("unitField");
 const unitSelect = document.getElementById("unit");
 const chapterSelect = document.getElementById("chapter");
 const sectionSelect = document.getElementById("section");
 const chapterField = document.getElementById("chapterField");
+const sectionField = document.getElementById("sectionField");
 const chapterLabel = document.getElementById("chapterLabel");
 const sectionLabel = document.getElementById("sectionLabel");
 const modeSelect = document.getElementById("mode");
 const homeView = document.getElementById("homeView");
 const archiveView = document.getElementById("archiveView");
-const archiveBtn = document.getElementById("archiveBtn");
+const startBtn = document.getElementById("startBtn");
+const wrongBtn = document.getElementById("wrongBtn");
 const backHomeBtn = document.getElementById("backHomeBtn");
 const archiveScopeText = document.getElementById("archiveScopeText");
 const archiveScopeBadge = document.getElementById("archiveScopeBadge");
@@ -1697,6 +2487,7 @@ function getQuestionTypeLabel(item) {
 }
 
 function getScopeLabel() {
+  if (modeSelect.value === "wrong") return "错题库 · 全部错题";
   const unit = getSelectedUnit();
   const unitConfig = getUnitConfig(unit);
   const sectionCode = sectionSelect.value;
@@ -1712,10 +2503,17 @@ function getScopeLabel() {
 function syncUnitUI() {
   const unit = getSelectedUnit();
   const unitConfig = getUnitConfig(unit);
+  const wrongMode = modeSelect.value === "wrong";
   const showChartControls = unit === "chart";
   heroTitle.textContent = "Brooks 交易课程训练系统";
-  heroText.textContent = unitConfig.heroText;
-  chapterField.classList.toggle("hidden", !showChartControls);
+  heroText.textContent = wrongMode
+    ? "当前模式：错题库。所有单元、章节和小节的错题已合并到同一个题池。"
+    : unitConfig.heroText;
+  controlGrid.classList.toggle("wrong-mode", wrongMode);
+  settingsScope.classList.toggle("wrong-mode", wrongMode);
+  unitField.classList.toggle("hidden", wrongMode);
+  chapterField.classList.toggle("hidden", wrongMode || !showChartControls);
+  sectionField.classList.toggle("hidden", wrongMode);
   chapterLabel.textContent = "章节范围";
   sectionLabel.textContent = unitConfig.sectionLabel;
   sectionStatLabel.textContent = unitConfig.sectionCountLabel;
@@ -1774,11 +2572,12 @@ function init() {
     updateScopeInfo();
   });
   sectionSelect.addEventListener("change", updateScopeInfo);
-  modeSelect.addEventListener("change", updateScopeInfo);
-  document.getElementById("startBtn").addEventListener("click", start);
-  archiveBtn.addEventListener("click", () => openArchive("mastery"));
-  document.getElementById("resetBtn").addEventListener("click", resetSession);
-  document.getElementById("clearWrongBtn").addEventListener("click", clearWrongBank);
+  modeSelect.addEventListener("change", () => {
+    updateScopeInfo();
+    syncBottomMenuState();
+  });
+  startBtn.addEventListener("click", startRegularTraining);
+  wrongBtn.addEventListener("click", startWrongTraining);
   clearHistoryBtn.addEventListener("click", clearAnsweredHistory);
   backHomeBtn.addEventListener("click", goHome);
   archiveMasteryTab.addEventListener("click", () => openArchive("mastery"));
@@ -1826,6 +2625,7 @@ function getBank(mode) {
 }
 
 function getFilteredQuestions(mode) {
+  if (mode === "wrong") return getWrongQuestions();
   const unit = getSelectedUnit();
   const sectionCode = sectionSelect.value;
   return getBank(mode).filter(item => {
@@ -1882,6 +2682,15 @@ function applyRouteFromHash() {
   archiveHistoryTab.classList.toggle("active", currentArchiveTab === "history");
   archiveMasteryPanel.classList.toggle("hidden", currentArchiveTab !== "mastery");
   archiveHistoryPanel.classList.toggle("hidden", currentArchiveTab !== "history");
+  syncBottomMenuState();
+}
+
+function syncBottomMenuState() {
+  const wrongModeActive = modeSelect.value === "wrong";
+  startBtn.toggleAttribute("aria-current", !wrongModeActive);
+  if (!wrongModeActive) startBtn.setAttribute("aria-current", "page");
+  wrongBtn.toggleAttribute("aria-current", wrongModeActive);
+  if (wrongModeActive) wrongBtn.setAttribute("aria-current", "page");
 }
 
 function setRouteHash(hash) {
@@ -1904,6 +2713,20 @@ function goHome() {
   setRouteHash("#home");
 }
 
+function startRegularTraining() {
+  if (modeSelect.value === "wrong") {
+    modeSelect.value = "quiz";
+    updateScopeInfo();
+  }
+  start();
+}
+
+function startWrongTraining() {
+  modeSelect.value = "wrong";
+  updateScopeInfo();
+  start();
+}
+
 function start() {
   const mode = modeSelect.value;
   const pool = shuffle([...getFilteredQuestions(mode)]);
@@ -1918,8 +2741,13 @@ function start() {
     autoNextTimer: null
   };
 
-  sessionBadge.textContent = `${getUnitConfig().label} · ${modeLabels[mode]}`;
+  sessionBadge.textContent = mode === "wrong"
+    ? `错题库 · 全部 ${pool.length} 题`
+    : `${getUnitConfig().label} · ${modeLabels[mode]}`;
+  goHome();
   render();
+  syncBottomMenuState();
+  focusTrainerOnMobile();
 }
 
 function resetSession() {
@@ -2015,6 +2843,14 @@ function next() {
   session.index += 1;
   session.answered = false;
   render();
+  focusTrainerOnMobile();
+}
+
+function focusTrainerOnMobile() {
+  if (typeof globalThis.matchMedia !== "function" || !globalThis.matchMedia("(max-width: 699px)").matches) return;
+  globalThis.requestAnimationFrame(() => {
+    panel.parentElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function renderResult() {
@@ -2054,7 +2890,7 @@ function showFeedbackPop(correct, item) {
   feedbackPop.className = `feedback-pop show ${correct ? "ok" : "bad"}`;
   feedbackPop.setAttribute("aria-hidden", "false");
   feedbackActions.classList.remove("hidden");
-  feedbackFace.textContent = correct ? "😄" : "🥲";
+  feedbackFace.textContent = correct ? "✓" : "×";
   feedbackTitle.textContent = correct ? "答对了" : "原笔记这样说";
 
   feedbackBody.innerHTML = `
@@ -2294,11 +3130,15 @@ function updatePendingDetailList(visibleSections) {
       .filter(Boolean);
 
     return `
-      <div class="mastery-detail-item">
-        <strong>${getSectionDisplayName(section.code)}</strong>
-        <span>当前状态：${getSectionProgressText(section.code)}</span>
-        <span>未过关题点：${remainingQuestions.join("；") || "暂无"}</span>
-      </div>
+      <details class="mastery-detail-item">
+        <summary>
+          <strong>${getSectionDisplayName(section.code)}</strong>
+          <span>当前状态：${getSectionProgressText(section.code)}</span>
+        </summary>
+        <div class="mastery-points">
+          <span>未过关题点：${remainingQuestions.join("；") || "暂无"}</span>
+        </div>
+      </details>
     `;
   }).join("");
 }
@@ -2397,7 +3237,7 @@ function clearWrongBank() {
   if (!wrongQuestionIds.length) {
     feedbackPop.className = "feedback-pop show ok";
     feedbackPop.setAttribute("aria-hidden", "false");
-    feedbackFace.textContent = "🧹";
+    feedbackFace.textContent = "—";
     feedbackTitle.textContent = "错题库为空";
     feedbackBody.textContent = "当前没有需要清空的错题。";
     globalThis.setTimeout(hideFeedbackPop, 900);
@@ -2415,7 +3255,7 @@ function clearWrongBank() {
 
   feedbackPop.className = "feedback-pop show ok";
   feedbackPop.setAttribute("aria-hidden", "false");
-  feedbackFace.textContent = "🧹";
+  feedbackFace.textContent = "✓";
   feedbackTitle.textContent = "已清空";
   feedbackBody.textContent = "错题库已经清空。";
   globalThis.setTimeout(hideFeedbackPop, 900);
@@ -2425,7 +3265,7 @@ function clearAnsweredHistory() {
   if (!Object.keys(answeredQuestionStats).length) {
     feedbackPop.className = "feedback-pop show ok";
     feedbackPop.setAttribute("aria-hidden", "false");
-    feedbackFace.textContent = "🧾";
+    feedbackFace.textContent = "—";
     feedbackTitle.textContent = "记录为空";
     feedbackBody.textContent = "当前没有需要清空的做题记录。";
     globalThis.setTimeout(hideFeedbackPop, 900);
@@ -2439,7 +3279,7 @@ function clearAnsweredHistory() {
 
   feedbackPop.className = "feedback-pop show ok";
   feedbackPop.setAttribute("aria-hidden", "false");
-  feedbackFace.textContent = "🧾";
+  feedbackFace.textContent = "✓";
   feedbackTitle.textContent = "已清空";
   feedbackBody.textContent = "做题记录已经清空。";
   globalThis.setTimeout(hideFeedbackPop, 900);
