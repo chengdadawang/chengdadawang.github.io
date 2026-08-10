@@ -1469,6 +1469,7 @@ details.mastery-detail-item{
 .controls{
   padding:0;
   border:none;
+  margin:0;
 }
 
 .settings-section{
@@ -1552,6 +1553,20 @@ details.mastery-detail-item{
   font-size:18px;
 }
 
+.setup-start-btn{
+  width:100%;
+  min-height:54px;
+  margin-top:18px;
+  padding:12px 16px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#000000;
+  color:#ffffff;
+  font-size:17px;
+  font-weight:800;
+  cursor:pointer;
+}
+
 .bottom-menu{
   width:min(600px, 100%);
   padding:5px max(12px, env(safe-area-inset-right)) max(5px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
@@ -1586,17 +1601,61 @@ details.mastery-detail-item{
   margin:4px auto 0;
   background:#000000;
 }
+
+/* Setup and quiz are separate screens. Keep the quiz page visually quiet. */
+.trainer{
+  display:none;
+}
+
+.quiz-view .hero,
+.quiz-view .controls,
+.quiz-view .bottom-menu{
+  display:none;
+}
+
+.quiz-view .trainer{
+  display:block;
+  margin-top:0;
+  min-height:calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+.quiz-view.shell{
+  padding-bottom:max(18px, env(safe-area-inset-bottom));
+}
+
+.quiz-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid #000000;
+}
+
+.quiz-back-btn{
+  width:auto;
+  min-height:40px;
+  padding:8px 10px;
+  border:1px solid #000000;
+  border-radius:0;
+  background:#ffffff;
+  color:#000000;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.quiz-header .badge{
+  max-width:70%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
 <div class="shell">
-  <section class="hero">
-    <div>
-      <h1 id="heroTitle">Brooks 交易课程训练系统</h1>
-      <p id="heroText">当前单元：入门。按 10 个主题训练，支持基础题、情境题和混合训练。</p>
-    </div>
-  </section>
-
   <div class="view" id="homeView">
     <section class="card controls">
       <section class="settings-section" id="settingsBasics" aria-labelledby="settingsBasicsTitle">
@@ -1643,12 +1702,14 @@ details.mastery-detail-item{
           <span class="hidden-meta" id="scopeStat">入门 · 全部主题</span>
           <small class="hidden-meta" id="modeStat">基础题库</small>
         </div>
+
+        <button class="setup-start-btn" id="setupStartBtn" type="button">开始答题</button>
       </section>
     </section>
 
-    <section class="card trainer">
-      <div class="topline">
-        <h2>开始训练后会在这里出题</h2>
+    <section class="card trainer" aria-label="答题页">
+      <div class="quiz-header">
+        <button class="quiz-back-btn" id="backSettingsBtn" type="button">← 返回设置</button>
         <span class="badge" id="sessionBadge">等待开始</span>
       </div>
 
@@ -1732,7 +1793,7 @@ details.mastery-detail-item{
   </section>
 
   <nav class="actions bottom-menu" aria-label="训练菜单">
-    <button class="primary" id="startBtn" type="button" aria-current="page">训练</button>
+    <button class="primary" id="startBtn" type="button" aria-current="page">答题</button>
     <button class="secondary" id="wrongBtn" type="button">错题库</button>
   </nav>
 </div>
@@ -2380,8 +2441,6 @@ const MASTERY_STORAGE_KEY = "brooks_mastered_question_ids";
 const ANSWERED_STORAGE_KEY = "brooks_answered_question_stats";
 const TRAINING_UNIT_STORAGE_KEY = "brooks_selected_unit";
 
-const heroTitle = document.getElementById("heroTitle");
-const heroText = document.getElementById("heroText");
 const controlGrid = document.getElementById("controlGrid");
 const settingsScope = document.getElementById("settingsScope");
 const unitField = document.getElementById("unitField");
@@ -2394,9 +2453,12 @@ const chapterLabel = document.getElementById("chapterLabel");
 const sectionLabel = document.getElementById("sectionLabel");
 const modeSelect = document.getElementById("mode");
 const homeView = document.getElementById("homeView");
+const shell = document.querySelector(".shell");
 const archiveView = document.getElementById("archiveView");
 const startBtn = document.getElementById("startBtn");
+const setupStartBtn = document.getElementById("setupStartBtn");
 const wrongBtn = document.getElementById("wrongBtn");
+const backSettingsBtn = document.getElementById("backSettingsBtn");
 const backHomeBtn = document.getElementById("backHomeBtn");
 const archiveScopeText = document.getElementById("archiveScopeText");
 const archiveScopeBadge = document.getElementById("archiveScopeBadge");
@@ -2505,10 +2567,6 @@ function syncUnitUI() {
   const unitConfig = getUnitConfig(unit);
   const wrongMode = modeSelect.value === "wrong";
   const showChartControls = unit === "chart";
-  heroTitle.textContent = "Brooks 交易课程训练系统";
-  heroText.textContent = wrongMode
-    ? "当前模式：错题库。所有单元、章节和小节的错题已合并到同一个题池。"
-    : unitConfig.heroText;
   controlGrid.classList.toggle("wrong-mode", wrongMode);
   settingsScope.classList.toggle("wrong-mode", wrongMode);
   unitField.classList.toggle("hidden", wrongMode);
@@ -2576,8 +2634,10 @@ function init() {
     updateScopeInfo();
     syncBottomMenuState();
   });
-  startBtn.addEventListener("click", startRegularTraining);
-  wrongBtn.addEventListener("click", startWrongTraining);
+  startBtn.addEventListener("click", openRegularSetup);
+  setupStartBtn.addEventListener("click", startRegularTraining);
+  wrongBtn.addEventListener("click", openWrongSetup);
+  backSettingsBtn.addEventListener("click", goHome);
   clearHistoryBtn.addEventListener("click", clearAnsweredHistory);
   backHomeBtn.addEventListener("click", goHome);
   archiveMasteryTab.addEventListener("click", () => openArchive("mastery"));
@@ -2666,6 +2726,7 @@ function updateArchiveSummary(scopeLabel) {
 
 function parseRouteFromHash() {
   const hash = (globalThis.location?.hash || "").replace(/^#/, "");
+  if (hash === "quiz") return { view: "quiz", tab: "mastery" };
   if (hash === "archive-history") return { view: "archive", tab: "history" };
   if (hash === "archive" || hash === "archive-mastery") return { view: "archive", tab: "mastery" };
   return { view: "home", tab: "mastery" };
@@ -2676,8 +2737,9 @@ function applyRouteFromHash() {
   currentView = route.view;
   currentArchiveTab = route.tab;
 
-  homeView.classList.toggle("hidden", currentView !== "home");
+  homeView.classList.toggle("hidden", currentView === "archive");
   archiveView.classList.toggle("hidden", currentView !== "archive");
+  shell.classList.toggle("quiz-view", currentView === "quiz");
   archiveMasteryTab.classList.toggle("active", currentArchiveTab === "mastery");
   archiveHistoryTab.classList.toggle("active", currentArchiveTab === "history");
   archiveMasteryPanel.classList.toggle("hidden", currentArchiveTab !== "mastery");
@@ -2714,17 +2776,19 @@ function goHome() {
 }
 
 function startRegularTraining() {
-  if (modeSelect.value === "wrong") {
-    modeSelect.value = "quiz";
-    updateScopeInfo();
-  }
   start();
 }
 
-function startWrongTraining() {
+function openRegularSetup() {
+  if (modeSelect.value === "wrong") modeSelect.value = "quiz";
+  updateScopeInfo();
+  goHome();
+}
+
+function openWrongSetup() {
   modeSelect.value = "wrong";
   updateScopeInfo();
-  start();
+  goHome();
 }
 
 function start() {
@@ -2744,7 +2808,7 @@ function start() {
   sessionBadge.textContent = mode === "wrong"
     ? `错题库 · 全部 ${pool.length} 题`
     : `${getUnitConfig().label} · ${modeLabels[mode]}`;
-  goHome();
+  setRouteHash("#quiz");
   render();
   syncBottomMenuState();
   focusTrainerOnMobile();
